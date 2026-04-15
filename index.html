@@ -63,7 +63,7 @@
 <!-- COMPRAR -->
 <section class="section ticket-section" id="comprar">
   <div class="ticket-wrap">
-    <div class="section-header" style="text-align:center;margin-bottom:2.5rem">
+    <div class="section-header" style="text-align:center;margin-bottom:1.5rem">
       <span class="section-eyebrow"><!-- renderer.js --></span>
       <h2 class="section-title"><!-- renderer.js --></h2>
     </div>
@@ -106,25 +106,34 @@
 <!-- DISPONIBLES -->
 <section class="section avail-section" id="disponibles">
   <span class="section-eyebrow">Consulta</span>
-  <h2 class="section-title" style="margin-bottom:2rem">BOLETOS <span class="g">DISPONIBLES</span></h2>
+  <h2 class="section-title">BOLETOS <span class="g">DISPONIBLES</span></h2>
 
-  <div class="search-row">
-    <input type="number" class="s-input" id="sinput" placeholder="Buscar número..." min="1" max="1100" autocomplete="off">
-    <div class="f-btns">
-      <button class="f-btn on" data-filter="all">Todos</button>
-      <button class="f-btn" data-filter="av">Disponibles</button>
-      <button class="f-btn" data-filter="tk">Vendidos</button>
+  <div class="avail-panel">
+
+    <!-- Buscador -->
+    <div class="avail-search">
+      <span class="search-prefix" aria-hidden="true">#</span>
+      <input type="number" class="s-input" id="sinput" placeholder="Buscar número..." min="1" max="1100" autocomplete="off">
     </div>
-  </div>
 
-  <div class="legend">
-    <div class="leg"><span class="dot av"></span>Disponible</div>
-    <div class="leg"><span class="dot tk"></span>Vendido</div>
-    <div class="leg"><span class="dot sl"></span>Seleccionado</div>
-  </div>
+    <!-- Filtros + Leyenda -->
+    <div class="avail-controls">
+      <div class="f-btns">
+        <button class="f-btn on" data-filter="all">Todos</button>
+        <button class="f-btn" data-filter="av">Disponibles</button>
+        <button class="f-btn" data-filter="tk">Vendidos</button>
+      </div>
+      <div class="legend">
+        <div class="leg"><span class="dot av"></span>Libre</div>
+        <div class="leg"><span class="dot tk"></span>Vendido</div>
+        <div class="leg"><span class="dot sl"></span>Elegido</div>
+      </div>
+    </div>
 
-  <div class="tgrid" id="tgrid"></div>
-  <div class="gcounter" id="gcnt"></div>
+    <div class="tgrid" id="tgrid"></div>
+    <div class="gcounter" id="gcnt"></div>
+
+  </div>
 </section>
 
 <!-- SOCIAL -->

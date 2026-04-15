@@ -5,6 +5,10 @@
   z-index: 5;
 }
 
+@media (max-width: 768px) {
+  .section { padding: 1rem 4vw; }
+}
+
 .section-eyebrow {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: .7rem; letter-spacing: 5px; text-transform: uppercase;

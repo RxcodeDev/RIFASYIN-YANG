@@ -1,4 +1,5 @@
 import { TOTAL, WA_NUM, SOLD } from '../config.js';
+import { playTick, playWin, playSelect, playError } from '../utils/sounds.js';
 
 // ── Estado del módulo ─────────────────────────────────────────────
 let selected  = null;  // número actualmente elegido (null = ninguno)
@@ -38,6 +39,8 @@ export function genRand() {
   const iv = setInterval(() => {
     el.textContent = String(Math.floor(Math.random() * TOTAL) + 1).padStart(3, '0');
     el.classList.add('spin');
+    // progress 0→1 para que el tick decelere (sonido de ruleta frenando)
+    playTick(count / 22);
     count++;
 
     if (count > 22) {
@@ -56,6 +59,7 @@ export function genRand() {
       el.textContent = String(picked).padStart(3, '0');
       el.classList.remove('spin');
 
+      playWin();
       selected = picked;
       _updateWA();
       _highlightGrid(picked);
@@ -80,10 +84,12 @@ export function checkT(v) {
     status.textContent = '✗ Número ya vendido — elige otro';
     status.className   = 'no';
     selected           = null;
+    playError();
   } else {
     status.textContent = '✓ ¡Disponible! Apártalo ahora';
     status.className   = 'ok';
     selected           = n;
+    playSelect();
     _highlightGrid(n);
   }
 
@@ -160,8 +166,11 @@ function _pickGrid(n) {
   input.value = n;
   checkT(String(n));
 
-  document.getElementById('comprar').scrollIntoView({ behavior: 'smooth' });
+  // Render primero — estabiliza el DOM antes de hacer scroll.
+  // Si se llama después, el reflow de 1100 celdas desplaza el destino.
   renderGrid(curFilter, document.getElementById('sinput').value);
+
+  document.getElementById('comprar').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function _highlightGrid(n) {
