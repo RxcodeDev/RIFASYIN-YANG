@@ -185,7 +185,7 @@
   .leg { font-size: .6rem; letter-spacing: 1px; }
   .tgrid {
     grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
-    gap: 4px; max-height: 400px;
+    gap: 4px; max-height: 55dvh;
   }
   .tnum { font-size: .72rem; }
   .tnum.sl { font-size: .78rem; }

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel — Rifas Yin & Yang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/panel.css" />
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="panel-header">
+  <div class="panel-brand">
+    <img src="../assets/logo.jpeg" alt="Rifas Yin &amp; Yang" class="panel-logo" />
+    <span class="panel-title">PANEL <span>ADMIN</span></span>
+  </div>
+
+  <div class="panel-stats">
+    <div class="panel-stat">
+      <span class="panel-stat-n" id="stat-total">—</span>
+      <span class="panel-stat-l">Total</span>
+    </div>
+    <div class="panel-stat stat-pagado">
+      <span class="panel-stat-n" id="stat-pagado">—</span>
+      <span class="panel-stat-l">Pagados</span>
+    </div>
+    <div class="panel-stat stat-apartado">
+      <span class="panel-stat-n" id="stat-apartado">—</span>
+      <span class="panel-stat-l">Apartados</span>
+    </div>
+    <div class="panel-stat">
+      <span class="panel-stat-n" id="stat-disponible">—</span>
+      <span class="panel-stat-l">Libres</span>
+    </div>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-search">
+    <span class="toolbar-search-icon" aria-hidden="true">#</span>
+    <input type="search" class="t-input" id="search" placeholder="Buscar nombre, teléfono, boleto..." autocomplete="off" />
+  </div>
+
+  <select class="t-select" id="filter-estado">
+    <option value="">Todos los estados</option>
+    <option value="Pagado">Pagado</option>
+    <option value="Apartado">Apartado</option>
+    <option value="Disponible">Disponible</option>
+  </select>
+
+  <select class="t-select" id="filter-vendedor">
+    <option value="">Todos los vendedores</option>
+  </select>
+
+  <button class="btn btn-primary ml-auto" id="btn-nuevo">+ Nuevo</button>
+  <button class="btn btn-ghost" id="btn-recargar" aria-label="Recargar datos">↻</button>
+</div>
+
+<!-- CONTENIDO -->
+<main class="panel-body">
+  <div class="table-wrap">
+    <div id="loader" class="loader">
+      <div class="spinner" aria-hidden="true"></div>
+      Cargando boletos…
+    </div>
+
+    <table id="tabla" hidden>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Pago</th>
+          <th>Vendedor</th>
+          <th>Promotor</th>
+          <th>Método</th>
+          <th>Restante</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <p id="empty" class="empty" hidden>No se encontraron boletos.</p>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h2 class="modal-title" id="modal-title">Boleto <span></span></h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="f-num">No. Boleto</label>
+        <input class="form-input" type="number" id="f-num" min="1" max="1100" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-tel">Teléfono</label>
+        <input class="form-input" type="tel" id="f-tel" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label" for="f-nombre">Nombre del Comprador</label>
+        <input class="form-input" type="text" id="f-nombre" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-estado-boleto">Estado Boleto</label>
+        <select class="form-select" id="f-estado-boleto">
+          <option>Disponible</option>
+          <option>Apartado</option>
+          <option>Pagado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-estado-pago">Estado Pago</label>
+        <select class="form-select" id="f-estado-pago">
+          <option>No pagado</option>
+          <option>Pagado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-vendedor">Vendedor</label>
+        <input class="form-input" type="text" id="f-vendedor" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-promotor">Promotor</label>
+        <input class="form-input" type="text" id="f-promotor" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-metodo">Método de Pago</label>
+        <select class="form-select" id="f-metodo">
+          <option value=""></option>
+          <option>Efectivo</option>
+          <option>Transfer</option>
+          <option>Boletos</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-restante">Restante ($)</label>
+        <input class="form-input" type="number" id="f-restante" min="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-fecha-limite">Fecha Límite Apartado</label>
+        <input class="form-input" type="date" id="f-fecha-limite" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-estado-apartado">Estado Apartado</label>
+        <select class="form-select" id="f-estado-apartado">
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-id-cliente">ID Cliente</label>
+        <input class="form-input" type="text" id="f-id-cliente" />
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btn-cancelar">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>

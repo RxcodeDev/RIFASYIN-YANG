@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIFA — Control de Boletos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #161618;
+      --border: #2a2a2e;
+      --accent: #c8f135;
+      --accent2: #f1c835;
+      --text: #f0f0ee;
+      --muted: #666;
+      --pagado: #c8f135;
+      --apartado: #f1c835;
+      --disponible: #444;
+      --red: #ff4d4d;
+    }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    header h1 span { color: var(--accent); }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .stats strong { color: var(--text); font-size: 1rem; display: block; }
+
+    /* TOOLBAR */
+    .toolbar {
+      display: flex;
+      gap: 1rem;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"], select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.85rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+
+    input[type="text"] { width: 240px; }
+
+    .btn {
+      padding: 0.5rem 1.1rem;
+      border-radius: 6px;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:hover { opacity: 0.85; }
+
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: var(--red); color: #fff; }
+
+    .ml-auto { margin-left: auto; }
+
+    /* TABLA */
+    .table-wrap {
+      overflow-x: auto;
+      padding: 0 2rem 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 1.25rem;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+
+    tbody tr:hover { background: var(--surface); }
+
+    tbody td {
+      padding: 0.65rem 0.75rem;
+      white-space: nowrap;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .badge-pagado    { background: var(--pagado); color: #000; }
+    .badge-apartado  { background: var(--apartado); color: #000; }
+    .badge-disponible{ background: var(--disponible); color: #aaa; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: min(540px, 95vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .modal h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .modal h2 span { color: var(--accent); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    /* LOADER */
+    .loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      gap: 0.75rem;
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--accent);
+      color: #000;
+      padding: 0.65rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 999;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { background: var(--red); color: #fff; }
+
+    /* EMPTY */
+    .empty {
+      text-align: center;
+      padding: 4rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>RIFA <span>•</span> Control de Boletos</h1>
+  <div class="stats">
+    <div><strong id="stat-total">—</strong>Total</div>
+    <div><strong id="stat-pagado">—</strong>Pagados</div>
+    <div><strong id="stat-apartado">—</strong>Apartados</div>
+    <div><strong id="stat-disponible">—</strong>Disponibles</div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <input type="text" id="search" placeholder="Buscar nombre, teléfono, boleto..." />
+  <select id="filter-estado">
+    <option value="">Todos los estados</option>
+    <option value="Pagado">Pagado</option>
+    <option value="Apartado">Apartado</option>
+    <option value="Disponible">Disponible</option>
+  </select>
+  <select id="filter-vendedor">
+    <option value="">Todos los vendedores</option>
+  </select>
+  <button class="btn btn-primary ml-auto" id="btn-nuevo">+ Nuevo boleto</button>
+  <button class="btn btn-secondary" id="btn-recargar">↻ Recargar</button>
+</div>
+
+<div class="table-wrap">
+  <div id="loader" class="loader"><div class="spinner"></div> Cargando boletos...</div>
+  <table id="tabla" style="display:none">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Estado Boleto</th>
+        <th>Estado Pago</th>
+        <th>Vendedor</th>
+        <th>Promotor</th>
+        <th>Método Pago</th>
+        <th>Restante</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty" class="empty" style="display:none">No se encontraron boletos.</div>
+</div>
+
+<!-- MODAL EDITAR / NUEVO -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">Boleto <span id="modal-num"></span></h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>No. Boleto</label>
+        <input type="text" id="f-num" />
+      </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" id="f-tel" />
+      </div>
+      <div class="form-group full">
+        <label>Nombre del Comprador</label>
+        <input type="text" id="f-nombre" />
+      </div>
+      <div class="form-group">
+        <label>Estado Boleto</label>
+        <select id="f-estado-boleto">
+          <option>Disponible</option>
+          <option>Apartado</option>
+          <option>Pagado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Estado Pago</label>
+        <select id="f-estado-pago">
+          <option>No pagado</option>
+          <option>Pagado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Vendedor</label>
+        <input type="text" id="f-vendedor" />
+      </div>
+      <div class="form-group">
+        <label>Promotor</label>
+        <input type="text" id="f-promotor" />
+      </div>
+      <div class="form-group">
+        <label>Método de Pago</label>
+        <select id="f-metodo">
+          <option value=""></option>
+          <option>Efectivo</option>
+          <option>Transfer</option>
+          <option>Boletos</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Restante ($)</label>
+        <input type="text" id="f-restante" />
+      </div>
+      <div class="form-group">
+        <label>Fecha Límite Apartado</label>
+        <input type="text" id="f-fecha-limite" placeholder="2026-04-15" />
+      </div>
+      <div class="form-group">
+        <label>Estado Apartado</label>
+        <select id="f-estado-apartado">
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ID Cliente</label>
+        <input type="text" id="f-id-cliente" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
