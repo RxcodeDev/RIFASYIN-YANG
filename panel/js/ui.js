@@ -27,60 +27,100 @@ export function renderFiltroVendedor() {
   sel.value = cur; // mantener selección si ya había una
 }
 
-// ── Tabla ─────────────────────────────────────────────────────────
+// ── Tabla con lazy loading ────────────────────────────────────────
 const BADGE = {
   Pagado:     'badge-pagado',
   Apartado:   'badge-apartado',
   Disponible: 'badge-disponible',
 };
 
+const PAGE_SIZE = 50;   // filas por lote
+let   _allRows  = [];   // cache de filas del render actual
+let   _loaded   = 0;    // cuántas filas ya se insertaron
+let   _sentinel = null; // elemento centinela para IntersectionObserver
+let   _observer = null; // instancia del observer (se reutiliza)
+
+function _buildRow(b) {
+  const estado     = b['Estado Boleto'] || 'Disponible';
+  const badgeClass = BADGE[estado] ?? 'badge-disponible';
+  const restante   = b['Restante'];
+  const tr = document.createElement('tr');
+  tr.dataset.num = b['No. Boleto'];
+  tr.innerHTML = `
+    <td><strong>${b['No. Boleto']}</strong></td>
+    <td>${b['Nombre del Comprador'] || '<span style="opacity:.4">—</span>'}</td>
+    <td>${b['Teléfono'] || '—'}</td>
+    <td><span class="badge ${badgeClass}">${estado}</span></td>
+    <td>${b['Estado Pago'] || '—'}</td>
+    <td>${b['Vendedor'] || '—'}</td>
+    <td>${b['Promotor'] || '—'}</td>
+    <td>${b['Método de Pago'] || '—'}</td>
+    <td style="color:${restante > 0 ? 'var(--oro)' : 'var(--muted)'}">${restante ? '$' + restante : '—'}</td>
+    <td><button class="btn btn-ghost btn-sm" data-editar="${b['No. Boleto']}">Editar</button></td>
+  `;
+  return tr;
+}
+
+function _appendLote(tbody) {
+  const lote = _allRows.slice(_loaded, _loaded + PAGE_SIZE);
+  if (!lote.length) {
+    // No quedan filas: desconectar observer y quitar centinela
+    _observer?.disconnect();
+    _sentinel?.remove();
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  lote.forEach(b => frag.appendChild(_buildRow(b)));
+  // Insertar antes del sentinel (o al final si ya se quitó)
+  if (_sentinel && _sentinel.parentNode === tbody) {
+    tbody.insertBefore(frag, _sentinel);
+  } else {
+    tbody.appendChild(frag);
+  }
+  _loaded += lote.length;
+}
+
+function _initObserver(tbody) {
+  _observer?.disconnect();
+
+  // Centinela: fila invisible al final de la tabla
+  _sentinel = document.createElement('tr');
+  _sentinel.setAttribute('aria-hidden', 'true');
+  _sentinel.style.cssText = 'height:1px;visibility:hidden;';
+  tbody.appendChild(_sentinel);
+
+  _observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) _appendLote(tbody);
+  }, { threshold: 0 });
+
+  _observer.observe(_sentinel);
+}
+
 export function renderTabla() {
   const loader = document.getElementById('loader');
   const tabla  = document.getElementById('tabla');
   const empty  = document.getElementById('empty');
   const tbody  = document.getElementById('tbody');
-  const rows   = getBoletosFiltrados();
 
   loader.hidden = true;
   tbody.innerHTML = '';
+  _observer?.disconnect();
+  _sentinel = null;
 
-  if (rows.length === 0) {
+  _allRows = getBoletosFiltrados();
+  _loaded  = 0;
+
+  if (_allRows.length === 0) {
     tabla.hidden = true;
     empty.hidden = false;
     return;
   }
 
-  empty.hidden = false;
   tabla.hidden = false;
   empty.hidden = true;
 
-  const frag = document.createDocumentFragment();
-
-  rows.forEach(b => {
-    const estado     = b['Estado Boleto'] || 'Disponible';
-    const badgeClass = BADGE[estado] ?? 'badge-disponible';
-    const restante   = b['Restante'];
-
-    const tr = document.createElement('tr');
-    tr.dataset.num = b['No. Boleto'];
-    tr.innerHTML = `
-      <td><strong>${b['No. Boleto']}</strong></td>
-      <td>${b['Nombre del Comprador'] || '<span style="opacity:.4">—</span>'}</td>
-      <td>${b['Teléfono'] || '—'}</td>
-      <td><span class="badge ${badgeClass}">${estado}</span></td>
-      <td>${b['Estado Pago'] || '—'}</td>
-      <td>${b['Vendedor'] || '—'}</td>
-      <td>${b['Promotor'] || '—'}</td>
-      <td>${b['Método de Pago'] || '—'}</td>
-      <td style="color:${restante > 0 ? 'var(--oro)' : 'var(--muted)'}">${restante ? '$' + restante : '—'}</td>
-      <td>
-        <button class="btn btn-ghost btn-sm" data-editar="${b['No. Boleto']}">Editar</button>
-      </td>
-    `;
-    frag.appendChild(tr);
-  });
-
-  tbody.appendChild(frag);
+  _appendLote(tbody);         // primer lote inmediato
+  if (_loaded < _allRows.length) _initObserver(tbody); // lazy para el resto
 }
 
 export function showLoader() {
