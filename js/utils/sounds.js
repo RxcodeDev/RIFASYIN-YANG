@@ -18,6 +18,23 @@ function ctx() {
   return _ctx;
 }
 
+/**
+ * Desbloquea el AudioContext en iOS/Android.
+ * DEBE llamarse sincrónicamente dentro de un handler de touchstart o click.
+ * iOS no permite crear ni resumir AudioContext fuera de un gesto directo del usuario.
+ * Se registra una sola vez en document; después de desbloqueado se auto-elimina.
+ */
+export function unlockAudio() {
+  if (_ctx) return; // ya desbloqueado
+  const c = ctx();  // crea el contexto dentro del gesto
+  // Reproduce un buffer silencioso: fuerza a iOS a marcar el contexto como "allowed"
+  const buf = c.createBuffer(1, 1, 22050);
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  src.connect(c.destination);
+  src.start(0);
+}
+
 /** Crea un reverb sintético ligero con delay + feedback. */
 function _reverb(c, wet = 0.3) {
   const delay    = c.createDelay(0.1);

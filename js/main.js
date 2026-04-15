@@ -4,6 +4,7 @@ import { renderNav, renderHero, renderPrizes,
          renderFooter, renderPageMeta }                    from './utils/renderer.js';
 import { updateStats, setMode, genRand, checkT,
          renderGrid, filterBy, filterG }                   from './features/tickets.js';
+import { unlockAudio }                                     from './utils/sounds.js';
 
 async function bootstrap() {
   // ── Cargar contenido desde JSON ────────────────────────────────
@@ -16,6 +17,12 @@ async function bootstrap() {
   renderTicketSection(data.ticket);
   renderSocial(data.social);
   renderFooter(data.footer);
+
+  // ── Desbloquear AudioContext en primer gesto (iOS/Android) ────
+  // touchstart garantiza que estamos dentro de un gesto directo del usuario.
+  // { once: true } lo elimina automáticamente después del primer toque.
+  document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  document.addEventListener('click',      unlockAudio, { once: true });
 
   // ── Partículas decorativas ─────────────────────────────────────
   initSparks();
