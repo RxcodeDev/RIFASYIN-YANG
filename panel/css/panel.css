@@ -26,6 +26,11 @@
   --libre-text:   rgba(200, 137, 10, 0.45);
 }
 
+/* NOTE: el atributo [hidden] usa display:none del UA stylesheet pero
+   cualquier regla con display explícito (e.g. .loader{display:flex})
+   lo sobreescribe. Este !important garantiza que hidden siempre gane. */
+[hidden] { display: none !important; }
+
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
