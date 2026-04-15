@@ -1,0 +1,32 @@
+/*
+ * CSS entry point — NO añadir reglas aquí.
+ * Agregar capas o componentes nuevos: declara la capa, luego @import.
+ *
+ * NOTE: @import requiere servidor HTTP (file:// puede bloquearlo en Chrome).
+ *   Para desarrollo local usa `npx serve .` o la extensión Live Server de VS Code.
+ */
+
+/* 1. Orden de capas (la primera declaración gana la prioridad) */
+@layer tokens, base, animations, layout, components;
+
+/* 2. Tokens de diseño */
+@import './tokens.css' layer(tokens);
+
+/* 3. Reset + body */
+@import './base.css' layer(base);
+
+/* 4. Keyframes */
+@import './animations.css' layer(animations);
+
+/* 5. Contenedores de sección + responsive */
+@import './layout.css' layer(layout);
+
+/* 6. Componentes — cada archivo es independiente y autocontenido */
+@import './components/nav.css'         layer(components);
+@import './components/hero.css'        layer(components);
+@import './components/stats.css'       layer(components);
+@import './components/buttons.css'     layer(components);
+@import './components/ticket-card.css' layer(components);
+@import './components/ticket-grid.css' layer(components);
+@import './components/social.css'      layer(components);
+@import './components/footer.css'      layer(components);

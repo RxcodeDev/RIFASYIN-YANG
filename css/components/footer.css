@@ -1,0 +1,15 @@
+footer {
+  background: var(--negro);
+  border-top: 1px solid rgba(200, 137, 10, .2);
+  padding: 1.8rem 5vw;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+  position: relative; z-index: 5;
+}
+
+.f-logo {
+  font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 3px;
+  background: linear-gradient(135deg, var(--oro), var(--dorado));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.f-text { font-size: .7rem; color: rgba(200, 137, 10, .5); letter-spacing: 1px; text-align: right; }

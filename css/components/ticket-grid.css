@@ -1,0 +1,69 @@
+/* ── Buscador + filtros ── */
+.search-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+.s-input {
+  flex: 1; min-width: 180px;
+  background: rgba(80, 8, 0, .4); border: 1px solid var(--dorado);
+  color: var(--blanco); font-family: 'Barlow', sans-serif; font-size: .95rem;
+  padding: .75rem 1.2rem; outline: none; transition: border-color .2s;
+}
+.s-input:focus        { border-color: var(--oro); }
+.s-input::placeholder { color: rgba(200, 137, 10, .4); font-size: .8rem; }
+
+.f-btns { display: flex; gap: .4rem; }
+.f-btn  {
+  padding: .75rem 1.1rem;
+  background: rgba(80, 8, 0, .5); border: 1px solid rgba(200, 137, 10, .4);
+  color: var(--crema); font-family: 'Barlow Condensed'; font-size: .7rem;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all .2s;
+}
+.f-btn.on {
+  background: linear-gradient(135deg, var(--rojo-vivo), var(--rojo-oscuro));
+  border-color: var(--rojo-vivo); color: var(--oro);
+}
+
+/* ── Leyenda ── */
+.legend { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.leg    { display: flex; align-items: center; gap: .5rem; font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--crema); }
+.dot    { width: 12px; height: 12px; border-radius: 2px; }
+.dot.av { background: rgba(80, 8, 0, .5); border: 1px solid rgba(200, 137, 10, .4); }
+.dot.tk { background: rgba(40, 3, 0, .3); border: 1px solid rgba(100, 50, 0, .2); }
+.dot.sl { background: linear-gradient(135deg, var(--dorado), var(--naranja)); }
+
+/* ── Grid ── */
+.tgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 5px; max-height: 480px; overflow-y: auto; padding-right: .4rem;
+  scrollbar-width: thin; scrollbar-color: var(--dorado) rgba(80, 8, 0, .5);
+}
+.tgrid::-webkit-scrollbar       { width: 4px; }
+.tgrid::-webkit-scrollbar-track { background: rgba(80, 8, 0, .5); }
+.tgrid::-webkit-scrollbar-thumb { background: var(--dorado); }
+
+.tnum {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed'; font-size: .78rem; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; transition: all .15s;
+  border: 1px solid rgba(200, 137, 10, .25);
+  background: rgba(80, 8, 0, .4); color: var(--dorado-claro); user-select: none;
+}
+.tnum:hover:not(.tk) {
+  border-color: var(--oro); color: var(--oro);
+  transform: scale(1.07); box-shadow: 0 0 12px rgba(200, 137, 10, .4);
+}
+.tnum.tk {
+  background: rgba(20, 3, 0, .3); color: rgba(100, 50, 0, .35);
+  cursor: not-allowed; text-decoration: line-through; border-color: rgba(80, 20, 0, .2);
+}
+.tnum.sl {
+  background: linear-gradient(135deg, var(--dorado), var(--naranja));
+  border-color: var(--oro); color: var(--negro); font-weight: 900;
+  box-shadow: 0 0 18px rgba(200, 137, 10, .6);
+}
+
+/* ── Contador ── */
+.gcounter {
+  text-align: center; margin-top: 1.5rem;
+  font-size: .72rem; letter-spacing: 2px; color: var(--dorado); text-transform: uppercase;
+}

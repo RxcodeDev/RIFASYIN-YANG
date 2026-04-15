@@ -1,0 +1,54 @@
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: .75rem 5vw;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(10, 5, 1, 0.97), transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* Contenedor logo: imagen circular + texto de marca en fila */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.nav-logo-img {
+  display: block;
+  height: 42px;
+  width: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--dorado);
+  box-shadow: 0 0 10px rgba(200, 137, 10, .6);
+  flex-shrink: 0;
+}
+
+.nav-brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--oro), var(--dorado));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+
+.nav-links a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--crema); text-decoration: none; transition: color .2s;
+}
+.nav-links a:hover { color: var(--oro); }
+
+@media (max-width: 768px) {
+  nav {
+    background: rgba(10, 5, 1, .95);
+    padding: .5rem 4vw;
+  }
+  .nav-links    { display: none; }
+  .nav-logo-img { height: 36px; width: 36px; }
+  .nav-brand-name { font-size: 1rem; }
+}

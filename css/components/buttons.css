@@ -1,0 +1,49 @@
+/* ── Botón principal (fuego) ── */
+.btn-fire {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 800;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, var(--rojo-vivo), var(--rojo-oscuro));
+  color: var(--oro); border: none; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  box-shadow: 0 0 0 1px var(--dorado), 0 8px 30px rgba(200, 30, 0, .5);
+  transition: all .25s; text-decoration: none; display: inline-block;
+}
+.btn-fire:hover {
+  background: linear-gradient(135deg, var(--naranja), var(--rojo-vivo));
+  box-shadow: 0 0 0 1px var(--oro), 0 8px 40px rgba(230, 93, 4, .7);
+  transform: translateY(-3px);
+}
+
+/* ── Botón fantasma ── */
+.btn-ghost {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
+  padding: 1rem 2.5rem;
+  background: transparent; color: var(--dorado-claro);
+  border: 1px solid var(--dorado); cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  transition: all .25s; text-decoration: none; display: inline-block;
+}
+.btn-ghost:hover {
+  background: rgba(200, 137, 10, .1);
+  box-shadow: 0 0 20px rgba(200, 137, 10, .3);
+  transform: translateY(-3px);
+}
+
+/* ── Botón WhatsApp ── */
+.btn-wa {
+  font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
+  letter-spacing: 3px; text-transform: uppercase; font-weight: 800;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: var(--blanco); border: none; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 8px 25px rgba(37, 211, 102, .3);
+  transition: all .25s; display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
+}
+.btn-wa:hover {
+  background: linear-gradient(135deg, #2ee873, #25D366);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(37, 211, 102, .45);
+}

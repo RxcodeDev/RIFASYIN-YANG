@@ -1,0 +1,97 @@
+/* ── Wrapper ── */
+.ticket-wrap { max-width: 800px; margin: 0 auto; }
+
+/* ── Tarjeta ── */
+.ticket-card {
+  background: linear-gradient(135deg, rgba(80, 8, 0, .85), rgba(20, 3, 0, .9));
+  border: 1px solid rgba(200, 137, 10, .3);
+  padding: 2.5rem; position: relative;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  box-shadow: 0 0 60px rgba(107, 10, 0, .4), inset 0 0 40px rgba(0, 0, 0, .4);
+}
+.ticket-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--dorado-claro), var(--oro), var(--dorado-claro), transparent);
+}
+.ticket-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--rojo-vivo), transparent);
+}
+
+/* ── Tabs de modo ── */
+.mode-tabs  { display: flex; gap: 0; margin-bottom: 2rem; border: 1px solid var(--dorado); }
+.mode-tab   {
+  flex: 1; padding: .9rem; background: none; border: none;
+  font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+  color: var(--crema); transition: all .2s;
+}
+.mode-tab.active {
+  background: linear-gradient(135deg, var(--rojo-vivo), var(--rojo-oscuro));
+  color: var(--oro);
+}
+
+/* ── Paneles ── */
+#panel-r, #panel-m            { display: none; }
+#panel-r.show, #panel-m.show  { display: block; animation: fadeIn .3s ease; }
+
+/* ── Panel aleatorio ── */
+.rand-display { text-align: center; padding: 2rem 0; }
+.rand-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 8rem; letter-spacing: 6px; line-height: 1;
+  background: linear-gradient(135deg, var(--oro), var(--dorado-claro), var(--naranja));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(200, 137, 10, .6));
+  display: block; min-height: 9rem; transition: all .1s;
+}
+.rand-num.spin {
+  animation: numSpin .08s infinite;
+  filter: none; background: none;
+  -webkit-text-fill-color: rgba(200, 137, 10, .5);
+}
+.rand-hint { font-size: .75rem; color: var(--dorado); letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── Panel manual ── */
+.manual-wrap { padding: .5rem 0; }
+.ticket-input {
+  width: 100%;
+  background: rgba(0, 0, 0, .5);
+  border: 1px solid var(--dorado);
+  color: var(--oro);
+  font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 6px;
+  padding: .8rem 1.5rem; text-align: center; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ticket-input:focus       { border-color: var(--oro); box-shadow: 0 0 20px rgba(200, 137, 10, .3); }
+.ticket-input::placeholder{ color: rgba(200, 137, 10, .3); }
+
+.range-hint {
+  font-size: .72rem; color: var(--dorado); letter-spacing: 2px;
+  text-transform: uppercase; text-align: center; margin-top: .5rem;
+}
+
+#t-status {
+  text-align: center; margin-top: .8rem;
+  font-family: 'Barlow Condensed'; font-size: .9rem;
+  letter-spacing: 2px; text-transform: uppercase; min-height: 1.5rem;
+}
+#t-status.ok { color: #5ff080; }
+#t-status.no { color: var(--rojo-vivo); }
+
+/* ── Acciones ── */
+.ticket-actions {
+  margin-top: 2rem; display: flex; gap: 1rem;
+  justify-content: center; flex-wrap: wrap;
+}
+
+/* ── Nota ── */
+.ticket-note {
+  border-top: 1px solid rgba(200, 137, 10, .2); margin-top: 2rem; padding-top: 1.5rem;
+  text-align: center; font-size: .72rem; color: var(--crema);
+  letter-spacing: 1px; line-height: 1.9;
+}
+
+@media (max-width: 768px) {
+  .ticket-card { padding: 1.8rem 1.2rem; }
+  .rand-num    { font-size: 5.5rem; }
+}

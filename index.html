@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rifa Oficial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- Chispas decorativas -->
+<div class="sparks" id="sparks"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><!-- renderer.js --></div>
+  <ul class="nav-links"><!-- renderer.js --></ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-flames"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge"><!-- renderer.js --></div>
+
+    <h1 class="hero-title"><!-- renderer.js --></h1>
+
+    <p class="hero-sub"><!-- renderer.js --></p>
+
+    <div class="prizes-row"><!-- renderer.js --></div>
+
+    <div class="price-block">
+      <span class="price-label"><!-- renderer.js --></span>
+      <span class="price-tag"><!-- renderer.js --></span>
+    </div>
+
+    <div class="hero-cta">
+      <a href="#comprar" class="btn-fire"><!-- renderer.js --></a>
+      <a href="#disponibles" class="btn-ghost"><!-- renderer.js --></a>
+    </div>
+  </div>
+
+  <!-- Coche -->
+  <div class="hero-car-wrap">
+    <img src="assets/switf.webp" alt="Suzuki Swift 2026" loading="lazy" width="820" height="480">
+  </div>
+  <div class="hero-car-glow"></div>
+
+  <div class="tickets-badge"><!-- renderer.js --></div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><span class="stat-n">1,100</span><span class="stat-l">Boletos totales</span></div>
+  <div class="stat"><span class="stat-n" id="sn-sold">—</span><span class="stat-l">Vendidos</span></div>
+  <div class="stat"><span class="stat-n" id="sn-avail">—</span><span class="stat-l">Disponibles</span></div>
+  <div class="stat"><span class="stat-n">10</span><span class="stat-l">Ganadores</span></div>
+</div>
+
+<!-- COMPRAR -->
+<section class="section ticket-section" id="comprar">
+  <div class="ticket-wrap">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem">
+      <span class="section-eyebrow"><!-- renderer.js --></span>
+      <h2 class="section-title"><!-- renderer.js --></h2>
+    </div>
+
+    <div class="ticket-card">
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="r"><!-- renderer.js --></button>
+        <button class="mode-tab" data-mode="m"><!-- renderer.js --></button>
+      </div>
+
+      <!-- Panel aleatorio -->
+      <div id="panel-r" class="show">
+        <div class="rand-display">
+          <span class="rand-num" id="rnum">—</span>
+          <p class="rand-hint"><!-- renderer.js --></p>
+        </div>
+        <div style="text-align:center">
+          <button class="btn-fire" id="btn-genrand" style="font-size:1rem;padding:1rem 3rem"><!-- renderer.js --></button>
+        </div>
+      </div>
+
+      <!-- Panel manual -->
+      <div id="panel-m">
+        <div class="manual-wrap">
+          <input type="number" class="ticket-input" id="minput" placeholder="000" min="1" max="1100" autocomplete="off">
+          <div class="range-hint"><!-- renderer.js --></div>
+          <div id="t-status" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="ticket-actions">
+        <a class="btn-wa" id="wa-btn" href="#" target="_blank" rel="noopener noreferrer"><!-- renderer.js --></a>
+      </div>
+
+      <div class="ticket-note"><!-- renderer.js --></div>
+    </div>
+  </div>
+</section>
+
+<!-- DISPONIBLES -->
+<section class="section avail-section" id="disponibles">
+  <span class="section-eyebrow">Consulta</span>
+  <h2 class="section-title" style="margin-bottom:2rem">BOLETOS <span class="g">DISPONIBLES</span></h2>
+
+  <div class="search-row">
+    <input type="number" class="s-input" id="sinput" placeholder="Buscar número..." min="1" max="1100" autocomplete="off">
+    <div class="f-btns">
+      <button class="f-btn on" data-filter="all">Todos</button>
+      <button class="f-btn" data-filter="av">Disponibles</button>
+      <button class="f-btn" data-filter="tk">Vendidos</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><span class="dot av"></span>Disponible</div>
+    <div class="leg"><span class="dot tk"></span>Vendido</div>
+    <div class="leg"><span class="dot sl"></span>Seleccionado</div>
+  </div>
+
+  <div class="tgrid" id="tgrid"></div>
+  <div class="gcounter" id="gcnt"></div>
+</section>
+
+<!-- SOCIAL -->
+<section class="social-section" id="redes">
+  <span class="section-eyebrow"><!-- renderer.js --></span>
+  <h2 class="section-title"><!-- renderer.js --></h2>
+  <p><!-- renderer.js --></p>
+  <div class="social-cards"><!-- renderer.js --></div>
+  <div class="deco-line"><!-- renderer.js --></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo"><!-- renderer.js --></div>
+  <div class="f-text"><!-- renderer.js --></div>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

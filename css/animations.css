@@ -1,0 +1,41 @@
+@keyframes flicker {
+  0%   { opacity: .85; transform: scaleY(1); }
+  100% { opacity: 1;   transform: scaleY(1.03); }
+}
+
+@keyframes rise {
+  0%   { opacity: 0;  transform: translateY(0)     scale(1); }
+  20%  { opacity: .9; }
+  100% { opacity: 0;  transform: translateY(-80vh) scale(.3); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-6px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes carIn {
+  from { opacity: 0; transform: translateX(12%) translateY(15px); }
+  to   { opacity: 1; transform: translateX(0)   translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 1px var(--dorado), 0 8px 30px rgba(200, 30, 0, .5); }
+  50%       { box-shadow: 0 0 0 2px var(--oro),    0 8px 45px rgba(230, 93, 4, .8); }
+}
+
+@keyframes numSpin {
+  0%   { opacity: 1; }
+  50%  { opacity: .3; }
+  100% { opacity: 1; }
+}

@@ -1,0 +1,20 @@
+*   { margin: 0; padding: 0; box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body {
+  background:   var(--negro);
+  color:        var(--blanco);
+  font-family:  'Barlow', sans-serif;
+  overflow-x:   hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 120% 60% at 50%  0%, rgba(180, 20,  0, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse  80% 40% at 20% 80%, rgba(120, 10,  0, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse  60% 40% at 80% 90%, rgba(200,100,  0, 0.15) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}

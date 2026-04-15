@@ -1,0 +1,60 @@
+{
+  "site": {
+    "title": "Rifas Yin & Yang — Suzuki Swift 2026",
+    "brandName": "RIFAS YIN & YANG",
+    "logo": "assets/logo.png",
+    "year": 2026
+  },
+  "hero": {
+    "badge": "RIFA OFICIAL 2026",
+    "titleLines": ["¡GANA UN", "SUZUKI", "SWIFT", "2026!"],
+    "titleClasses": ["", "dorado", "outline", "rojo"],
+    "subtitle": "Solo <strong>1,100 números</strong> disponibles. Un boleto puede cambiarte la vida — ¡hay 10 ganadores!",
+    "scrollBadge": "Solo 1,100 boletos",
+    "ctaPrimary":   { "label": "Comprar Boleto",   "href": "#comprar" },
+    "ctaSecondary": { "label": "Ver Disponibles", "href": "#disponibles" }
+  },
+  "prizes": [
+    { "place": "1er Lugar", "medal": "trophy", "amount": "SWIFT",   "label": "Suzuki Swift 2026" },
+    { "place": "2do Lugar", "medal": "medal1", "amount": "$10K",    "label": "Pesos en efectivo" },
+    { "place": "3\u00b0\u201310\u00b0",  "medal": "star",   "amount": "$3K",     "label": "c/u en efectivo" }
+  ],
+  "ticket": {
+    "price": "$550",
+    "currency": "MXN",
+    "priceLabel": "Precio por boleto",
+    "sectionEyebrow": "Participar ahora",
+    "sectionTitle": "ELIGE TU NÚMERO",
+    "noteText": "Contáctanos por WhatsApp para confirmar disponibilidad y datos de pago:<br><a href=\"https://wa.me/523348179129\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 334 817 9129</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523314895478\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 331 489 5478</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523329624753\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 332 962 4753</a>",
+    "noteHighlight": "¡Los boletos se reservan por orden de llegada!",
+    "waButtonLabel": "Apartar por WhatsApp",
+    "randHint": "Presiona el botón para generar",
+    "randButtonLabel": "Generar Número",
+    "manualTabLabel": "Elegir Número",
+    "randomTabLabel": "Número Aleatorio",
+    "rangeHint": "Número del 001 al 1100"
+  },
+  "social": {
+    "eyebrow": "Síguenos",
+    "title": "NUESTRAS REDES",
+    "subtitle": "Entérate de todo: ganadores, sorteos en vivo y promociones especiales.",
+    "closingLine": "¡EL EQUILIBRIO PERFECTO PARA GANAR!",
+    "networks": [
+      { "id": "wa", "label": "Canal WhatsApp", "url": "https://whatsapp.com/channel/0029Vb7MrecJP20vtQEdzI2Y" },
+      { "id": "fb", "label": "Facebook",       "url": "https://www.facebook.com/share/1AucLcj8Nw/?mibextid=wwXIfr" }
+    ]
+  },
+  "footer": {
+    "brand": "RIFAS YIN & YANG 2026",
+    "copyright": "© 2026 Rifas Yin & Yang · Todos los derechos reservados",
+    "note": "Números se actualizan en tiempo real"
+  },
+  "nav": {
+    "links": [
+      { "label": "Comprar",     "href": "#comprar" },
+      { "label": "Disponibles", "href": "#disponibles" },
+      { "label": "Contacto",    "href": "#redes" }
+    ]
+  }
+}
+

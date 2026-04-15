@@ -1,0 +1,172 @@
+import { TOTAL, WA_NUM, SOLD } from '../config.js';
+
+// ── Estado del módulo ─────────────────────────────────────────────
+let selected  = null;  // número actualmente elegido (null = ninguno)
+let mode      = 'r';   // 'r' aleatorio | 'm' manual
+let curFilter = 'all'; // 'all' | 'av' | 'tk'
+let spinning  = false; // guard para genRand: evita intervalos concurrentes
+
+// ── Stats ─────────────────────────────────────────────────────────
+export function updateStats() {
+  document.getElementById('sn-sold').textContent  = SOLD.size;
+  document.getElementById('sn-avail').textContent = TOTAL - SOLD.size;
+}
+
+// ── Cambio de modo (aleatorio ↔ manual) ───────────────────────────
+export function setMode(m) {
+  mode = m;
+
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === m);
+  });
+
+  document.getElementById('panel-r').classList.toggle('show', m === 'r');
+  document.getElementById('panel-m').classList.toggle('show', m === 'm');
+
+  selected = null;
+  _updateWA();
+}
+
+// ── Número aleatorio ──────────────────────────────────────────────
+export function genRand() {
+  if (spinning) return; // previene intervalos concurrentes por doble-click
+  spinning = true;
+
+  const el    = document.getElementById('rnum');
+  let   count = 0;
+
+  const iv = setInterval(() => {
+    el.textContent = String(Math.floor(Math.random() * TOTAL) + 1).padStart(3, '0');
+    el.classList.add('spin');
+    count++;
+
+    if (count > 22) {
+      clearInterval(iv);
+      spinning = false;
+
+      const avail = Array.from({ length: TOTAL }, (_, i) => i + 1).filter(n => !SOLD.has(n));
+
+      if (!avail.length) {
+        el.textContent = 'AGOTADO';
+        el.classList.remove('spin');
+        return;
+      }
+
+      const picked = avail[Math.floor(Math.random() * avail.length)];
+      el.textContent = String(picked).padStart(3, '0');
+      el.classList.remove('spin');
+
+      selected = picked;
+      _updateWA();
+      _highlightGrid(picked);
+    }
+  }, 65);
+}
+
+// ── Verificación de número manual ────────────────────────────────
+export function checkT(v) {
+  const n      = parseInt(v, 10);
+  const status = document.getElementById('t-status');
+
+  if (!v || isNaN(n) || n < 1 || n > TOTAL) {
+    status.textContent = '';
+    status.className   = '';
+    selected           = null;
+    _updateWA();
+    return;
+  }
+
+  if (SOLD.has(n)) {
+    status.textContent = '✗ Número ya vendido — elige otro';
+    status.className   = 'no';
+    selected           = null;
+  } else {
+    status.textContent = '✓ ¡Disponible! Apártalo ahora';
+    status.className   = 'ok';
+    selected           = n;
+    _highlightGrid(n);
+  }
+
+  _updateWA();
+}
+
+// ── Grid de boletos ───────────────────────────────────────────────
+export function renderGrid(filter = 'all', search = '') {
+  const grid = document.getElementById('tgrid');
+  grid.innerHTML = '';
+  let shown = 0;
+
+  for (let i = 1; i <= TOTAL; i++) {
+    const isSold = SOLD.has(i);
+    const isSel  = selected === i;
+    const ns     = String(i).padStart(3, '0');
+
+    if (filter === 'av' && isSold)      continue;
+    if (filter === 'tk' && !isSold)     continue;
+    if (search && !ns.includes(search)) continue;
+
+    const cell = document.createElement('div');
+    cell.className   = 'tnum' + (isSold ? ' tk' : '') + (isSel ? ' sl' : '');
+    cell.textContent = ns;
+    cell.dataset.n   = i;
+
+    if (!isSold) cell.addEventListener('click', () => _pickGrid(i));
+
+    grid.appendChild(cell);
+    shown++;
+  }
+
+  document.getElementById('gcnt').textContent =
+    `Mostrando ${shown} · ${TOTAL - SOLD.size} disponibles de ${TOTAL}`;
+}
+
+// ── Filtros del grid ──────────────────────────────────────────────
+export function filterBy(filter) {
+  curFilter = filter;
+
+  document.querySelectorAll('.f-btn').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.filter === filter);
+  });
+
+  renderGrid(filter, document.getElementById('sinput').value);
+}
+
+export function filterG(value) {
+  renderGrid(curFilter, value || '');
+}
+
+// ── Privadas ──────────────────────────────────────────────────────
+
+function _updateWA() {
+  const btn = document.getElementById('wa-btn');
+
+  if (selected) {
+    const msg = encodeURIComponent(
+      `¡Hola! Quiero apartar el boleto *${String(selected).padStart(3, '0')}* de la Rifa Suzuki Swift 2026. ¿Está disponible? 🚗🔥`
+    );
+    btn.href            = `https://wa.me/${WA_NUM}?text=${msg}`;
+    btn.style.animation = 'pulse 1.8s infinite';
+  } else {
+    btn.href            = `https://wa.me/${WA_NUM}`;
+    btn.style.animation = '';
+  }
+}
+
+function _pickGrid(n) {
+  selected = n;
+  setMode('m');
+
+  const input = document.getElementById('minput');
+  input.value = n;
+  checkT(String(n));
+
+  document.getElementById('comprar').scrollIntoView({ behavior: 'smooth' });
+  renderGrid(curFilter, document.getElementById('sinput').value);
+}
+
+function _highlightGrid(n) {
+  renderGrid(curFilter, document.getElementById('sinput').value);
+
+  const el = document.querySelector(`.tnum[data-n="${n}"]`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}

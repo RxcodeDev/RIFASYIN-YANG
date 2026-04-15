@@ -1,0 +1,48 @@
+/* ── Sección base ── */
+.section {
+  padding: 6rem 5vw;
+  position: relative;
+  z-index: 5;
+}
+
+.section-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--dorado); display: block; margin-bottom: .6rem;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: 2px; line-height: 1;
+  margin-bottom: .5rem;
+}
+.section-title .g {
+  background: linear-gradient(135deg, var(--oro), var(--dorado-claro));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* ── Sección ticket ── */
+.ticket-section {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(107, 10, 0, .3), transparent),
+    var(--negro);
+}
+
+/* ── Sección disponibles ── */
+.avail-section {
+  background: linear-gradient(to bottom, var(--negro), rgba(40, 5, 0, .4), var(--negro));
+}
+
+/* ── Sección social ── */
+.social-section {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(107, 10, 0, .25), transparent),
+    var(--negro);
+  border-top: 2px solid var(--dorado);
+  text-align: center;
+  padding: 6rem 5vw;
+}
+
+/* NOTE: responsive overrides viven en cada componente (no aquí)
+ * porque @layer(components) > @layer(layout) — si las reglas estuvieran
+ * aquí, la capa layout nunca podría sobreescribir la capa components. */

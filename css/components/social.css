@@ -1,0 +1,31 @@
+.social-cards {
+  display: flex; gap: 1.2rem; justify-content: center;
+  flex-wrap: wrap; margin-top: 3rem; margin-bottom: 2.5rem;
+}
+
+.scard {
+  display: flex; align-items: center; gap: .8rem;
+  padding: 1.1rem 2rem;
+  background: linear-gradient(135deg, rgba(80, 8, 0, .6), rgba(20, 3, 0, .8));
+  border: 1px solid rgba(200, 137, 10, .3); color: var(--crema);
+  text-decoration: none;
+  font-family: 'Barlow Condensed'; font-size: .85rem; letter-spacing: 2px; text-transform: uppercase;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: all .25s;
+}
+.scard:hover { color: var(--oro); transform: translateY(-4px); }
+.scard.ig:hover { border-color: #E1306C; box-shadow: 0 8px 25px rgba(225,  48, 108, .25); }
+.scard.fb:hover { border-color: #1877F2; box-shadow: 0 8px 25px rgba( 24, 119, 242, .25); }
+.scard.tt:hover { border-color: #00f2ea; box-shadow: 0 8px 25px rgba(  0, 242, 234, .25); }
+.scard.wa:hover { border-color: #25D366; box-shadow: 0 8px 25px rgba( 37, 211, 102, .25); }
+
+.sicon { width: 22px; height: 22px; }
+
+.deco-line {
+  display: inline-flex; align-items: center; gap: 1rem;
+  font-family: 'Bebas Neue'; font-size: .9rem; letter-spacing: 4px; color: var(--dorado);
+  margin-top: 1rem;
+}
+.deco-line::before,
+.deco-line::after  { content: ''; flex: 1; height: 1px; width: 60px; background: linear-gradient(90deg, transparent, var(--dorado)); }
+.deco-line::after  { background: linear-gradient(90deg, var(--dorado), transparent); }
