@@ -1,5 +1,5 @@
 /**
- * panel/js/ui.js
+ * js/panel/ui.js
  * Renderizado de tabla, stats, modal y toast.
  * Sin innerHTML para formularios (seguridad) — DOM API para inputs.
  */

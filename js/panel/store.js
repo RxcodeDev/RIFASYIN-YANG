@@ -1,5 +1,5 @@
 /**
- * panel/js/store.js
+ * js/panel/store.js
  * Estado global del panel. Sin framework — módulo singleton con getters/setters.
  */
 

@@ -9,4 +9,18 @@
   --naranja:      #e85d04;
   --blanco:       #fff8ee;
   --crema:        #fde9c0;
+
+  /* Panel */
+  --surface:       rgba(55, 7, 0, 0.6);
+  --surface-hi:    rgba(80, 10, 0, 0.75);
+  --border:        rgba(200, 137, 10, 0.18);
+  --border-hi:     rgba(200, 137, 10, 0.45);
+  --muted:         rgba(200, 137, 10, 0.4);
+
+  --pagado-bg:     rgba(0, 160, 60, 0.18);
+  --pagado-text:   #4ade80;
+  --apartado-bg:   rgba(200, 137, 10, 0.18);
+  --apartado-text: var(--oro);
+  --libre-bg:      rgba(255, 255, 255, 0.05);
+  --libre-text:    rgba(200, 137, 10, 0.45);
 }

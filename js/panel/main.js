@@ -1,5 +1,5 @@
 /**
- * panel/js/main.js
+ * js/panel/main.js
  * Bootstrap: carga datos, enlaza eventos. Sin lógica de negocio aquí.
  */
 import { sheets }          from './api.js';
