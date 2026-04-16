@@ -35,10 +35,11 @@ const BADGE = {
 };
 
 const PAGE_SIZE = 50;   // filas por lote
-let   _allRows  = [];   // cache de filas del render actual
-let   _loaded   = 0;    // cuántas filas ya se insertaron
-let   _sentinel = null; // elemento centinela para IntersectionObserver
-let   _observer = null; // instancia del observer (se reutiliza)
+let   _allRows   = [];   // cache de filas del render actual
+let   _loaded    = 0;    // cuántas filas ya se insertaron
+let   _sentinel  = null; // elemento centinela para IntersectionObserver
+let   _observer  = null; // instancia del observer (se reutiliza)
+let   _cardsList = null; // contenedor de cards (vista mobile)
 
 function _buildRow(b) {
   const estado     = b['Estado Boleto'] || 'Disponible';
@@ -59,6 +60,48 @@ function _buildRow(b) {
     <td><button class="btn btn-ghost btn-sm" data-editar="${b['No. Boleto']}">Editar</button></td>
   `;
   return tr;
+}
+
+// ── BoletoCard component (mobile) ────────────────────────────────
+function _buildCard(b) {
+  const estado     = b['Estado Boleto'] || 'Disponible';
+  const badgeClass = BADGE[estado] ?? 'badge-disponible';
+  const restante   = b['Restante'];
+
+  const rows = [
+    ['Tel',      b['Teléfono']       || '—'],
+    ['Vendedor', b['Vendedor']       || '—'],
+    ['Promotor', b['Promotor']       || '—'],
+    ['Método',   b['Método de Pago'] || '—'],
+  ];
+  if (restante > 0) rows.push(['Restante', `<span class="bc-restante">$${restante}</span>`]);
+
+  const gridHTML = rows
+    .map(([lbl, val]) => `<span class="bc-label">${lbl}</span><span class="bc-val">${val}</span>`)
+    .join('');
+
+  const card = document.createElement('div');
+  card.className  = 'boleto-card';
+  card.dataset.num = b['No. Boleto'];
+  card.innerHTML = `
+    <div class="bc-header">
+      <span class="bc-num">#${b['No. Boleto']}</span>
+      <span class="badge ${badgeClass}">${estado}</span>
+    </div>
+    <p class="bc-nombre">${b['Nombre del Comprador'] || '<em style="opacity:.4">Sin nombre</em>'}</p>
+    <div class="bc-grid">${gridHTML}</div>
+    <div class="bc-footer">
+      <button class="btn btn-ghost btn-sm" data-editar="${b['No. Boleto']}">Editar</button>
+    </div>
+  `;
+  return card;
+}
+
+function _renderAllCards() {
+  if (!_cardsList) return;
+  const frag = document.createDocumentFragment();
+  _allRows.forEach(b => frag.appendChild(_buildCard(b)));
+  _cardsList.appendChild(frag);
 }
 
 function _appendLote(tbody) {
@@ -101,9 +144,11 @@ export function renderTabla() {
   const tabla  = document.getElementById('tabla');
   const empty  = document.getElementById('empty');
   const tbody  = document.getElementById('tbody');
+  _cardsList   = document.getElementById('cards-list');
 
-  loader.hidden = true;
-  tbody.innerHTML = '';
+  loader.hidden        = true;
+  tbody.innerHTML      = '';
+  _cardsList.innerHTML = '';
   _observer?.disconnect();
   _sentinel = null;
 
@@ -111,22 +156,26 @@ export function renderTabla() {
   _loaded  = 0;
 
   if (_allRows.length === 0) {
-    tabla.hidden = true;
-    empty.hidden = false;
+    tabla.hidden      = true;
+    _cardsList.hidden = true;
+    empty.hidden      = false;
     return;
   }
 
-  tabla.hidden = false;
-  empty.hidden = true;
+  tabla.hidden      = false;
+  _cardsList.hidden = false;
+  empty.hidden      = true;
 
-  _appendLote(tbody);         // primer lote inmediato
-  if (_loaded < _allRows.length) _initObserver(tbody); // lazy para el resto
+  _appendLote(tbody);                                    // lazy para tabla (desktop)
+  _renderAllCards();                                     // completo para cards (mobile)
+  if (_loaded < _allRows.length) _initObserver(tbody);
 }
 
 export function showLoader() {
-  document.getElementById('loader').hidden = false;
-  document.getElementById('tabla').hidden  = true;
-  document.getElementById('empty').hidden  = true;
+  document.getElementById('loader').hidden      = false;
+  document.getElementById('tabla').hidden       = true;
+  document.getElementById('cards-list').hidden  = true;
+  document.getElementById('empty').hidden       = true;
 }
 
 // ── Modal ─────────────────────────────────────────────────────────

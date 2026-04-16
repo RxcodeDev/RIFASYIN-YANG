@@ -346,13 +346,79 @@ tbody td {
 .toast-ok    { background: linear-gradient(135deg, var(--dorado), var(--naranja)); color: var(--negro); }
 .toast-error { background: var(--rojo-vivo); color: var(--blanco); }
 
+/* ── BoletoCard — componente mobile ── */
+.cards-list {
+  display: none;
+  flex-direction: column;
+  gap: .65rem;
+  padding: .75rem;
+}
+
+.boleto-card {
+  background: rgba(10,5,1,.6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .9rem 1rem;
+  cursor: pointer;
+  transition: background .15s, border-color .2s;
+}
+.boleto-card:hover { background: var(--surface-hi); border-color: rgba(200,137,10,.3); }
+
+.bc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .4rem;
+}
+
+.bc-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; line-height: 1;
+  background: linear-gradient(135deg, var(--oro), var(--dorado-claro));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.bc-nombre {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .95rem; font-weight: 600; letter-spacing: .5px;
+  margin-bottom: .6rem;
+  color: var(--blanco);
+}
+
+.bc-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .25rem .75rem;
+  margin-bottom: .65rem;
+  align-items: baseline;
+}
+
+.bc-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .6rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bc-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; letter-spacing: .5px;
+  color: var(--blanco);
+}
+
+.bc-restante { color: var(--oro); font-weight: 700; }
+
+.bc-footer {
+  display: flex; justify-content: flex-end;
+  padding-top: .5rem;
+  border-top: 1px solid rgba(200,137,10,.08);
+}
+
 /* ── Mobile ── */
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .panel-stats     { gap: .65rem; }
   .panel-stat-n    { font-size: 1.1rem; }
   .panel-stat-l    { font-size: .5rem; }
   .form-grid       { grid-template-columns: 1fr; }
   .form-group.full { grid-column: 1; }
-  thead th:nth-child(n+6),
-  tbody td:nth-child(n+6) { display: none; } /* Oculta columnas secundarias en mobile */
+  .table-wrap      { overflow-x: visible; border: none; background: transparent; }
+  table            { display: none; }
+  .cards-list      { display: flex; }
 }
