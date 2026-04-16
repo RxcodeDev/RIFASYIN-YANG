@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/components/panel.css" />
 </head>
 <body>
@@ -60,6 +61,46 @@
   <button class="btn btn-ghost" id="btn-recargar" aria-label="Recargar datos">↻</button>
 </div>
 
+<!-- SPLIT VIEW -->
+<div class="split-view" id="split-view">
+
+<!-- DASHBOARD -->
+<section class="dashboard" id="dashboard" hidden>
+
+  <!-- Barra de progreso -->
+  <div class="dash-progress">
+    <div class="dp-meta">
+      <span class="dp-label">Progreso general de venta</span>
+      <span class="dp-pct" id="dp-pct">—</span>
+    </div>
+    <div class="dp-track" role="progressbar" aria-label="Porcentaje de boletos vendidos">
+      <div class="dp-seg dp-seg-pagado"   id="dp-seg-pagado"   style="width:0%"></div>
+      <div class="dp-seg dp-seg-apartado" id="dp-seg-apartado" style="width:0%"></div>
+    </div>
+    <div class="dp-dots">
+      <span class="dp-dot-item"><em class="dp-dot dp-dot-pagado"></em>Pagado</span>
+      <span class="dp-dot-item"><em class="dp-dot dp-dot-apartado"></em>Apartado</span>
+      <span class="dp-dot-item"><em class="dp-dot dp-dot-libre"></em>Disponible</span>
+    </div>
+  </div>
+
+  <!-- Gráficas -->
+  <div class="dash-charts">
+    <div class="chart-card">
+      <p class="chart-title">Estado de boletos</p>
+      <canvas id="chart-estados" class="chart-donut"></canvas>
+      <ul class="chart-legend" id="legend-estados"></ul>
+    </div>
+    <div class="chart-card chart-card-wide">
+      <p class="chart-title">Boletos por vendedor</p>
+      <div class="chart-scroll">
+        <canvas id="chart-vendedores" class="chart-bars"></canvas>
+      </div>
+    </div>
+  </div>
+
+</section>
+
 <!-- CONTENIDO -->
 <main class="panel-body">
   <div class="table-wrap">
@@ -92,19 +133,41 @@
   <div id="cards-list" class="cards-list" hidden></div>
 </main>
 
+</div><!-- /split-view -->
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal">
     <h2 class="modal-title" id="modal-title">Boleto <span></span></h2>
 
     <div class="form-grid">
-      <div class="form-group">
-        <label class="form-label" for="f-num">No. Boleto</label>
-        <input class="form-input" type="number" id="f-num" min="1" max="1100" />
+      <div class="form-group" id="fg-num">
+        <label class="form-label" for="np-trigger">No. Boleto</label>
+        <div class="num-picker" id="num-picker">
+          <button type="button" class="np-trigger" id="np-trigger"
+                  aria-haspopup="listbox" aria-expanded="false"
+                  aria-controls="np-dropdown">
+            <span class="np-label">— Elegir número —</span>
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="np-dropdown" id="np-dropdown" hidden>
+            <div class="np-search-wrap">
+              <input type="search" class="np-search" id="np-search"
+                     placeholder="Buscar número…" autocomplete="off"
+                     inputmode="numeric" aria-label="Buscar número de boleto" />
+            </div>
+            <p class="np-count" id="np-count" aria-live="polite"></p>
+            <div class="np-list" id="np-list" role="listbox" aria-label="Números disponibles"></div>
+          </div>
+        </div>
+        <input type="hidden" id="f-num" />
       </div>
       <div class="form-group">
         <label class="form-label" for="f-tel">Teléfono</label>
-        <input class="form-input" type="tel" id="f-tel" />
+        <input class="form-input" type="tel" id="f-tel" maxlength="10" pattern="\d{10}" inputmode="numeric" placeholder="10 dígitos" autocomplete="off" />
+        <span class="form-hint" id="tel-hint" hidden></span>
       </div>
       <div class="form-group full">
         <label class="form-label" for="f-nombre">Nombre del Comprador</label>
@@ -127,11 +190,15 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="f-vendedor">Vendedor</label>
-        <input class="form-input" type="text" id="f-vendedor" />
+        <select class="form-select" id="f-vendedor">
+          <option value="">— Seleccionar —</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="f-promotor">Promotor</label>
-        <input class="form-input" type="text" id="f-promotor" />
+        <select class="form-select" id="f-promotor">
+          <option value="">— Seleccionar —</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="f-metodo">Método de Pago</label>
@@ -159,7 +226,7 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="f-id-cliente">ID Cliente</label>
-        <input class="form-input" type="text" id="f-id-cliente" />
+        <input class="form-input" type="text" id="f-id-cliente" placeholder="CL-0001" pattern="CL-\d{4}" autocomplete="off" />
       </div>
     </div>
 
@@ -169,6 +236,8 @@
     </div>
   </div>
 </div>
+
+
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

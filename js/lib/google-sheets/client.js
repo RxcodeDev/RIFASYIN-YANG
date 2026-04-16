@@ -70,6 +70,27 @@ export class GoogleSheetsClient {
   }
 
   /**
+   * Upload a file (evidence of payment) for a given ticket number.
+   * Sends base64-encoded content to the Apps Script backend.
+   * The backend is expected to save the file in Google Drive and store the URL.
+   *
+   * @param {number} numero   - Ticket number (primary key).
+   * @param {string} base64   - Base64-encoded file content (no data URI prefix).
+   * @param {string} mimeType - MIME type, e.g. 'image/jpeg', 'application/pdf'.
+   * @param {string} nombre   - Original filename.
+   * @returns {Promise<object>}
+   */
+  async uploadFile(numero, base64, mimeType, nombre) {
+    return this.#transport.post({
+      accion:   this.#actions.uploadFile,
+      numero,
+      base64,
+      mimeType,
+      nombre,
+    });
+  }
+
+  /**
    * Update multiple columns of an existing row.
    * Sends only changed columns (diff against `original`), in parallel.
    *

@@ -27,13 +27,54 @@
 <div class="status-backdrop" id="statusBackdrop" role="dialog" aria-modal="true" aria-label="Consultar mi boleto" hidden>
   <div class="status-modal">
     <button class="status-close" id="statusClose" aria-label="Cerrar">&times;</button>
-    <h3 class="status-title">CONSULTA TU <span class="g">BOLETO</span></h3>
-    <p class="status-sub">Ingresa tu número para ver su estado actual.</p>
-    <div class="status-input-wrap">
-      <span class="status-hash">#</span>
-      <input type="number" id="statusInput" class="status-input" placeholder="000" min="1" max="1100" autocomplete="off">
+
+    <!-- PASO 1: Formulario de consulta -->
+    <div id="status-form">
+      <h3 class="status-title">CONSULTA TU <span class="g">BOLETO</span></h3>
+      <p class="status-sub">Ingresa tu número de boleto y teléfono registrado.</p>
+      <div class="status-fields">
+        <div class="status-input-wrap">
+          <span class="status-hash">#</span>
+          <input type="number" id="statusInput" class="status-input" placeholder="000" min="1" max="1100" autocomplete="off" inputmode="numeric">
+        </div>
+        <div class="status-tel-wrap">
+          <span class="status-tel-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+          </span>
+          <input type="tel" id="statusPhone" class="status-tel-input" placeholder="Teléfono (10 dígitos)" autocomplete="tel" inputmode="tel" maxlength="15">
+        </div>
+      </div>
+      <div class="status-error" id="statusError" role="alert" aria-live="polite" hidden></div>
+      <button class="status-btn" id="statusSubmit" type="button">Consultar boleto</button>
     </div>
-    <div class="status-result" id="statusResult" role="status" aria-live="polite"></div>
+
+    <!-- PASO 2: Detalle del boleto -->
+    <div id="status-detail" hidden>
+      <button class="status-back" id="statusBack" type="button">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Nueva consulta
+      </button>
+      <div class="status-detail-head">
+        <span class="status-ticket-num" id="detailNum"></span>
+        <span class="status-badge" id="detailBadge"></span>
+      </div>
+
+      <div class="status-abonos" id="detailAbonos"></div>
+
+      <div class="status-upload-zone" id="detailUpload" hidden>
+        <p class="upload-label">Subir comprobante de pago</p>
+        <label class="upload-drop" for="evidenciaInput">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 7l-3-3h2v-4h2v4h2l-3 3z"/></svg>
+          <span id="uploadFileName">Toca para seleccionar imagen o PDF</span>
+        </label>
+        <input type="file" id="evidenciaInput" accept="image/*,.pdf" class="upload-file-input" aria-label="Seleccionar comprobante">
+        <button class="upload-send-btn" id="uploadSendBtn" type="button" hidden>Enviar comprobante</button>
+        <div class="upload-feedback" id="uploadFeedback" role="status" aria-live="polite"></div>
+      </div>
+
+      <p class="status-notice-24h">La verificación del pago es manual y se actualiza en un máximo de 24 Hrs</p>
+    </div>
+
   </div>
 </div>
 

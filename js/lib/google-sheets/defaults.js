@@ -5,7 +5,8 @@
  * @type {{ getAll: string, add: string, update: string }}
  */
 export const DEFAULT_ACTIONS = {
-  getAll: 'getAll',
-  add:    'agregar',
-  update: 'actualizar',
+  getAll:     'getAll',
+  add:        'agregar',
+  update:     'actualizar',
+  uploadFile: 'subirEvidencia',
 };

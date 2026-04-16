@@ -7,7 +7,7 @@ import { setBoletos, getBoletos, setFiltro } from './store.js';
 import {
   renderStats, renderFiltroVendedor, renderTabla, showLoader,
   abrirModalNuevo, abrirModalEditar, cerrarModal,
-  getDatosForm, toast,
+  getDatosForm, toast, renderDashboard, validateForm,
 } from './ui.js';
 
 // ── Carga de datos ────────────────────────────────────────────────
@@ -19,6 +19,7 @@ async function cargar() {
     renderStats();
     renderFiltroVendedor();
     renderTabla();
+    renderDashboard();
   } catch (e) {
     toast('Error al cargar: ' + e.message, true);
   }
@@ -29,6 +30,8 @@ async function guardar() {
   const datos    = getDatosForm();
   const numInput = document.getElementById('f-num');
   const esEdicion = numInput.readOnly;
+
+  if (!validateForm(esEdicion)) return; // detener si hay errores
 
   try {
     document.getElementById('btn-guardar').disabled = true;

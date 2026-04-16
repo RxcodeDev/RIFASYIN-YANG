@@ -23,4 +23,7 @@
   --apartado-text: var(--oro);
   --libre-bg:      rgba(255, 255, 255, 0.05);
   --libre-text:    rgba(200, 137, 10, 0.45);
+
+  /* Layout */
+  --panel-header-h: 62px;
 }

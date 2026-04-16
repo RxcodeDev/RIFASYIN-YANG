@@ -44,3 +44,24 @@ export function getStats() {
 export function getVendedores() {
   return [...new Set(_boletos.map(b => b['Vendedor']).filter(Boolean))].sort();
 }
+
+// ── Promotores únicos (derivado) ──────────────────────────────────
+export function getPromotores() {
+  return [...new Set(_boletos.map(b => b['Promotor']).filter(Boolean))].sort();
+}
+
+// ── Siguiente ID de cliente (CL-XXXX) ────────────────────────────
+export function getNextClientId() {
+  const nums = _boletos
+    .map(b => b['ID Cliente'])
+    .filter(id => /^CL-\d{4}$/.test(id))
+    .map(id => parseInt(id.slice(3), 10));
+  const max = nums.length ? Math.max(...nums) : 0;
+  return `CL-${String(max + 1).padStart(4, '0')}`;
+}
+
+// ── Buscar boleto por teléfono (para autocompletado) ──────────────
+export function findByTelefono(tel) {
+  const t = String(tel).trim();
+  return _boletos.find(b => String(b['Teléfono']).trim() === t) ?? null;
+}

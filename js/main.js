@@ -8,6 +8,9 @@ import { SOLD, setSold }                                    from './config.js';
 import { unlockAudio }                                     from './utils/sounds.js';
 import { sheets }                                          from './panel/api.js';
 
+// Cache de todas las filas del sheet — se usa en el modal de verificación
+let _allRows = [];
+
 async function bootstrap() {
   // ── Cargar contenido desde JSON ────────────────────────────────
   const data = await fetch('data/site.json').then(r => r.json());
@@ -35,6 +38,7 @@ async function bootstrap() {
 
   // ── Sincronizar SOLD desde Google Sheets (no-bloqueante) ────────
   sheets.getAll().then(rows => {
+    _allRows = rows;
     const liveSold = new Set(
       rows
         .filter(r => (r['Estado Boleto'] || '').trim() !== 'Disponible')
@@ -142,51 +146,270 @@ function initVideoAutoplay() {
 }
 
 function initStatusModal() {
-  const backdrop = document.getElementById('statusBackdrop');
-  const btnOpen  = document.getElementById('btnMiBoleto');
-  const btnClose = document.getElementById('statusClose');
-  const input    = document.getElementById('statusInput');
-  const result   = document.getElementById('statusResult');
+  const backdrop       = document.getElementById('statusBackdrop');
+  const btnOpen        = document.getElementById('btnMiBoleto');
+  const btnClose       = document.getElementById('statusClose');
+  const formView       = document.getElementById('status-form');
+  const detailView     = document.getElementById('status-detail');
+  const inputNum       = document.getElementById('statusInput');
+  const inputPhone     = document.getElementById('statusPhone');
+  const errorEl        = document.getElementById('statusError');
+  const btnSubmit      = document.getElementById('statusSubmit');
+  const btnBack        = document.getElementById('statusBack');
+  const detailNum      = document.getElementById('detailNum');
+  const detailBadge    = document.getElementById('detailBadge');
+  const detailAbonos   = document.getElementById('detailAbonos');
+  const detailUpload   = document.getElementById('detailUpload');
+  const fileInput      = document.getElementById('evidenciaInput');
+  const uploadFileName = document.getElementById('uploadFileName');
+  const uploadSendBtn  = document.getElementById('uploadSendBtn');
+  const uploadFeedback = document.getElementById('uploadFeedback');
   if (!backdrop) return;
 
+  let _currentNum = null;
+
+  // ── Helpers ─────────────────────────────────────────────────────
+  function showErr(msg) {
+    errorEl.textContent = msg;
+    errorEl.hidden = false;
+  }
+
+  function clearErr() {
+    errorEl.textContent = '';
+    errorEl.hidden = true;
+  }
+
+  function normalizePhone(p) {
+    return String(p ?? '').replace(/\D/g, '').slice(-10);
+  }
+
+  // ── Open / close ─────────────────────────────────────────────────
   function open() {
     backdrop.hidden = false;
-    input.value = '';
-    result.className = 'status-result';
-    result.textContent = '';
-    requestAnimationFrame(() => input.focus());
+    resetForm();
+    requestAnimationFrame(() => inputNum.focus());
   }
 
   function close() {
     backdrop.hidden = true;
   }
 
+  function resetForm() {
+    formView.hidden   = false;
+    detailView.hidden = true;
+    inputNum.value    = '';
+    inputPhone.value  = '';
+    clearErr();
+    _currentNum = null;
+  }
+
+  // ── Query ────────────────────────────────────────────────────────
   function check() {
-    const n = parseInt(input.value, 10);
-    result.className = 'status-result';
-    result.textContent = '';
+    clearErr();
+    const n = parseInt(inputNum.value, 10);
 
     if (!n || n < 1 || n > 1100) {
-      result.className = 'status-result invalid';
-      result.textContent = 'Ingresa un número del 1 al 1100';
+      showErr('Ingresa un número de boleto del 1 al 1100.');
       return;
     }
 
-    const num = String(n).padStart(3, '0');
-    if (SOLD.has(n)) {
-      result.className = 'status-result vendido';
-      result.innerHTML = `Boleto #${num} &mdash; Apartado / Vendido`;
+    if (!_allRows.length) {
+      showErr('Los datos están cargando. Espera un momento e intenta de nuevo.');
+      return;
+    }
+
+    const row = _allRows.find(r => parseInt(r['No. Boleto'], 10) === n);
+    if (!row) {
+      showErr('Boleto no encontrado. Verifica el número.');
+      return;
+    }
+
+    const estado = (row['Estado Boleto'] ?? 'Disponible').trim();
+
+    if (estado === 'Disponible') {
+      _currentNum = n;
+      showDetail(row);
+      return;
+    }
+
+    const phone = inputPhone.value.trim();
+    if (!phone) {
+      showErr('Ingresa tu número de teléfono para verificar tu identidad.');
+      return;
+    }
+
+    const rowPhone  = normalizePhone(row['Teléfono']);
+    const inputNorm = normalizePhone(phone);
+    if (!rowPhone || rowPhone !== inputNorm) {
+      showErr('El teléfono no coincide con el registrado para este boleto.');
+      return;
+    }
+
+    _currentNum = n;
+    showDetail(row);
+  }
+
+  // ── Render detail ─────────────────────────────────────────────────
+  function showDetail(row) {
+    formView.hidden   = true;
+    detailView.hidden = false;
+
+    const n      = parseInt(row['No. Boleto'], 10);
+    const num    = String(n).padStart(3, '0');
+    const estado = (row['Estado Boleto'] ?? 'Disponible').trim();
+
+    detailNum.textContent = `Boleto #${num}`;
+
+    detailBadge.textContent = estado;
+    detailBadge.className   = 'status-badge';
+    const badgeMap = { Disponible: 'badge-libre', Apartado: 'badge-apartado', Pagado: 'badge-pagado' };
+    detailBadge.classList.add(badgeMap[estado] ?? 'badge-libre');
+
+    if (estado === 'Disponible') {
+      detailAbonos.innerHTML = '<p class="tl-available-msg">Este boleto está disponible. ¡Apártalo ahora!</p>';
+      detailUpload.hidden    = true;
     } else {
-      result.className = 'status-result libre';
-      result.innerHTML = `Boleto #${num} &mdash; Disponible`;
+      detailAbonos.innerHTML = buildTimeline(row, estado);
+      if (estado !== 'Pagado') {
+        detailUpload.hidden        = false;
+        fileInput.value            = '';
+        uploadFileName.textContent = 'Toca para seleccionar imagen o PDF';
+        uploadSendBtn.hidden       = true;
+        uploadFeedback.textContent = '';
+        uploadFeedback.className   = 'upload-feedback';
+      } else {
+        detailUpload.hidden = true;
+      }
     }
   }
 
-  btnOpen.addEventListener('click', open);
-  btnClose.addEventListener('click', close);
-  backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
+  function buildTimeline(row, estado) {
+    // NOTE: AB1 tiene espacio al final en el sheet — se prueba ambas variantes
+    const AB_KEYS = ['AB1 ', 'AB2', 'AB3', 'AB4', 'AB5', 'AB6', 'AB7', 'AB8', 'AB9', 'AB10', 'AB11', 'AB12'];
+    const PRECIO  = 550;
+
+    const abonos = AB_KEYS
+      .map((k, i) => ({ num: i + 1, amount: parseFloat(row[k] ?? row[k.trim()] ?? 0) || 0 }))
+      .filter(a => a.amount > 0);
+
+    const totalPagado = abonos.reduce((s, a) => s + a.amount, 0);
+    // NOTE: 'Restante ' tiene espacio al final en el sheet
+    const restante    = parseFloat(row['Restante '] ?? row['Restante'] ?? (PRECIO - totalPagado)) || (PRECIO - totalPagado);
+
+    const iconCheck  = `<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+    const iconCircle = `<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>`;
+    const iconStar   = `<svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+
+    let html = '<div class="tl-wrap">';
+
+    if (abonos.length === 0) {
+      html += `
+      <div class="tl-step pending">
+        <div class="tl-dot">${iconCircle}</div>
+        <div class="tl-content">
+          <span class="tl-label">Sin abonos registrados aún</span>
+          <span class="tl-amount">$${PRECIO.toLocaleString('es-MX')}</span>
+        </div>
+      </div>`;
+    } else {
+      abonos.forEach(ab => {
+        html += `
+      <div class="tl-step done">
+        <div class="tl-dot">${iconCheck}</div>
+        <div class="tl-content">
+          <span class="tl-label">Abono ${ab.num}</span>
+          <span class="tl-amount">$${ab.amount.toLocaleString('es-MX')}</span>
+        </div>
+      </div>`;
+      });
+
+      if (estado === 'Pagado') {
+        html += `
+      <div class="tl-step final">
+        <div class="tl-dot">${iconStar}</div>
+        <div class="tl-content">
+          <span class="tl-label">¡Pagado completo!</span>
+          <span class="tl-amount">$${PRECIO.toLocaleString('es-MX')}</span>
+        </div>
+      </div>`;
+      } else {
+        html += `
+      <div class="tl-step pending">
+        <div class="tl-dot">${iconCircle}</div>
+        <div class="tl-content">
+          <span class="tl-label">Pendiente por pagar</span>
+          <span class="tl-amount">$${restante.toLocaleString('es-MX')}</span>
+        </div>
+      </div>`;
+      }
+    }
+
+    html += `
+    <div class="tl-summary">
+      <div class="tl-sum-row"><span>Total pagado</span><span class="tl-sum-val">$${totalPagado.toLocaleString('es-MX')}</span></div>
+      ${estado !== 'Pagado' ? `<div class="tl-sum-row restante"><span>Falta</span><span class="tl-sum-val red">$${restante.toLocaleString('es-MX')}</span></div>` : ''}
+    </div>
+    </div>`;
+
+    return html;
+  }
+
+  // ── File upload ───────────────────────────────────────────────────
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    uploadFileName.textContent = file.name;
+    uploadSendBtn.hidden       = false;
+    uploadFeedback.textContent = '';
+    uploadFeedback.className   = 'upload-feedback';
+  });
+
+  uploadSendBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file || _currentNum === null) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      uploadFeedback.className   = 'upload-feedback error';
+      uploadFeedback.textContent = 'El archivo es muy grande. Máximo 5 MB.';
+      return;
+    }
+
+    uploadSendBtn.disabled    = true;
+    uploadSendBtn.textContent = 'Enviando…';
+    uploadFeedback.textContent = '';
+
+    try {
+      const base64 = await fileToBase64(file);
+      await sheets.uploadFile(_currentNum, base64, file.type, file.name);
+      uploadFeedback.className   = 'upload-feedback success';
+      uploadFeedback.textContent = '¡Comprobante enviado! Se verificará en máx. 24 hrs.';
+      uploadSendBtn.hidden = true;
+    } catch {
+      uploadFeedback.className   = 'upload-feedback error';
+      uploadFeedback.textContent = 'Error al enviar. Inténtalo de nuevo o envíalo por WhatsApp.';
+      uploadSendBtn.disabled    = false;
+      uploadSendBtn.textContent = 'Reintentar';
+    }
+  });
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ── Events ────────────────────────────────────────────────────────
+  btnSubmit.addEventListener('click', check);
+  btnBack.addEventListener('click',   resetForm);
+  btnOpen.addEventListener('click',   open);
+  btnClose.addEventListener('click',  close);
+  backdrop.addEventListener('click',  e => { if (e.target === backdrop) close(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  input.addEventListener('input', check);
+  inputNum.addEventListener('keydown',   e => { if (e.key === 'Enter') check(); });
+  inputPhone.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
 }
 
 document.addEventListener('DOMContentLoaded', bootstrap);
