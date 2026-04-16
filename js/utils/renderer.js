@@ -74,7 +74,7 @@ export function renderHero(hero) {
     if (primary) {
       primary.href = hero.ctaPrimary.href;
       primary.innerHTML = '';
-      primary.appendChild(icon('ticket', 'sicon'));
+      primary.appendChild(icon('car', 'sicon'));
       primary.append(` ${hero.ctaPrimary.label}`);
     }
     if (secondary) {
@@ -88,9 +88,9 @@ export function renderPrizes(prizes) {
   const row = document.querySelector('.prizes-row');
   if (!row) return;
   row.innerHTML = '';
-  prizes.forEach(p => {
+  prizes.forEach((p, i) => {
     const chip = document.createElement('div');
-    chip.className = 'prize-chip';
+    chip.className = `prize-chip p${i + 1}`;
 
     const place = document.createElement('span');
     place.className = 'place';
@@ -165,7 +165,13 @@ export function renderTicketSection(ticket) {
 
   // Nota
   const note = document.querySelector('.ticket-note');
-  if (note) note.innerHTML = `${ticket.noteText}<br><strong style="color:var(--dorado)">${ticket.noteHighlight}</strong>`;
+  if (note) {
+    note.innerHTML = `${ticket.noteText}<br><strong style="color:var(--dorado)">${ticket.noteHighlight}</strong>`;
+    // Inyectar ícono SVG en cada enlace de teléfono
+    note.querySelectorAll('.note-phone').forEach(a => {
+      a.prepend(icon('wa', 'sicon note-phone-icon'));
+    });
+  }
 }
 
 export function renderSocial(social) {
@@ -186,7 +192,7 @@ export function renderSocial(social) {
   cards.innerHTML = social.networks
     .map(n => `
       <a href="${n.url}" target="_blank" rel="noopener noreferrer" class="scard ${n.id}">
-        <svg class="sicon" viewBox="${icon(n.id).getAttribute ? '' : '0 0 24 24'}" fill="currentColor" aria-hidden="true"></svg>
+        <svg class="sicon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"></svg>
         ${n.label}
       </a>`)
     .join('');

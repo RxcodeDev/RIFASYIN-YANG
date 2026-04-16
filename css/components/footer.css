@@ -12,4 +12,4 @@ footer {
   background: linear-gradient(135deg, var(--oro), var(--dorado));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.f-text { font-size: .7rem; color: rgba(200, 137, 10, .5); letter-spacing: 1px; text-align: right; }
+.f-text { font-size: .7rem; color: var(--crema); letter-spacing: 1px; text-align: right; }

@@ -25,6 +25,7 @@
   font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
   letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
   color: var(--crema); transition: all .2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
 }
 .mode-tab.active {
   background: linear-gradient(135deg, var(--rojo-vivo), var(--rojo-oscuro));
@@ -47,7 +48,7 @@
 .rand-num.spin {
   animation: numSpin .08s infinite;
   filter: none; background: none;
-  -webkit-text-fill-color: rgba(200, 137, 10, .5);
+  -webkit-text-fill-color: var(--dorado);
 }
 .rand-hint { font-size: .75rem; color: var(--dorado); letter-spacing: 2px; text-transform: uppercase; }
 
@@ -63,7 +64,7 @@
   transition: border-color .2s, box-shadow .2s;
 }
 .ticket-input:focus       { border-color: var(--oro); box-shadow: 0 0 20px rgba(200, 137, 10, .3); }
-.ticket-input::placeholder{ color: rgba(200, 137, 10, .3); }
+.ticket-input::placeholder{ color: rgba(200, 137, 10, .5); }
 
 .range-hint {
   font-size: .72rem; color: var(--dorado); letter-spacing: 2px;
@@ -89,6 +90,21 @@
   border-top: 1px solid rgba(200, 137, 10, .2); margin-top: 2rem; padding-top: 1.5rem;
   text-align: center; font-size: .72rem; color: var(--crema);
   letter-spacing: 1px; line-height: 1.9;
+}
+
+.note-phone {
+  color: #fff;
+  display: inline-flex; align-items: center; gap: .3em;
+  text-decoration: none;
+  transition: color .2s;
+}
+.note-phone:hover { color: var(--dorado-claro); }
+
+.note-phone-icon {
+  width: .9em; height: .9em;
+  flex-shrink: 0;
+  vertical-align: middle;
+  color: #25D366;
 }
 
 @media (max-width: 768px) {

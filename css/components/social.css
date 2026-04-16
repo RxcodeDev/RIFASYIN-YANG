@@ -12,6 +12,7 @@
   font-family: 'Barlow Condensed'; font-size: .85rem; letter-spacing: 2px; text-transform: uppercase;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   transition: all .25s;
+  -webkit-tap-highlight-color: transparent;
 }
 .scard:hover { color: var(--oro); transform: translateY(-4px); }
 .scard.ig:hover { border-color: #E1306C; box-shadow: 0 8px 25px rgba(225,  48, 108, .25); }
@@ -19,7 +20,19 @@
 .scard.tt:hover { border-color: #00f2ea; box-shadow: 0 8px 25px rgba(  0, 242, 234, .25); }
 .scard.wa:hover { border-color: #25D366; box-shadow: 0 8px 25px rgba( 37, 211, 102, .25); }
 
-.sicon { width: 22px; height: 22px; }
+/* Fondos de marca */
+.scard.wa { background: linear-gradient(135deg, #128C7E, #25D366); color: #fff; border-color: #25D366; }
+.scard.fb { background: linear-gradient(135deg, #0d5dbb, #1877F2); color: #fff; border-color: #1877F2; }
+.scard.ig { background: linear-gradient(135deg, #833ab4, #E1306C, #fd1d1d); color: #fff; border-color: #E1306C; }
+.scard.tt { background: linear-gradient(135deg, #010101, #00f2ea); color: #fff; border-color: #00f2ea; }
+
+/* Estado activo (tap mobile) */
+.scard.wa:active { background: linear-gradient(135deg, #0a7060, #1eaa55); transform: translateY(0); }
+.scard.fb:active { background: linear-gradient(135deg, #0a4a99, #1464d4); transform: translateY(0); }
+.scard.ig:active { background: linear-gradient(135deg, #6a2f94, #c0285a, #d41818); transform: translateY(0); }
+.scard.tt:active { background: linear-gradient(135deg, #010101, #00c4be); transform: translateY(0); }
+
+.sicon { width: 22px; height: 22px; display: block; flex-shrink: 0; }
 
 .deco-line {
   display: inline-flex; align-items: center; gap: 1rem;

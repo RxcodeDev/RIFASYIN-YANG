@@ -3,16 +3,48 @@
   font-family: 'Barlow Condensed', sans-serif;
   font-size: .9rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 800;
   padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, var(--rojo-vivo), var(--rojo-oscuro));
-  color: var(--oro); border: none; cursor: pointer;
+  background: linear-gradient(135deg, #e8a800, #c97d00);
+  color: #f5f0e8; border: 2px solid rgba(255, 205, 30, 0.55); cursor: pointer;
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  box-shadow: 0 0 0 1px var(--dorado), 0 8px 30px rgba(200, 30, 0, .5);
-  transition: all .25s; text-decoration: none; display: inline-block;
+  box-shadow: 0 8px 30px rgba(200, 137, 10, .55);
+  transition: transform .25s, box-shadow .25s, background .25s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: .5rem; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  animation: btnPulse 1.8s ease-in-out infinite;
+}
+.btn-fire::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,.22) 50%, transparent 75%);
+  transform: translateX(-120%) skewX(-15deg);
+  animation: btnShimmer 1.8s ease-in-out infinite;
+  pointer-events: none;
 }
 .btn-fire:hover {
-  background: linear-gradient(135deg, var(--naranja), var(--rojo-vivo));
-  box-shadow: 0 0 0 1px var(--oro), 0 8px 40px rgba(230, 93, 4, .7);
+  background: linear-gradient(135deg, #f0b800, #d98e00);
+  box-shadow: 0 8px 40px rgba(200, 137, 10, .75);
   transform: translateY(-3px);
+  animation: none;
+}
+.btn-fire:hover::after {
+  animation: btnShimmer .6s ease-in-out;
+}
+.btn-fire:active {
+  background: linear-gradient(135deg, var(--dorado), var(--naranja));
+  transform: translateY(0);
+  animation: none;
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 6px 24px rgba(200,137,10,.45); }
+  50%       { box-shadow: 0 8px 45px rgba(200,137,10,.95), 0 0 70px rgba(255,175,0,.28), 0 0 120px rgba(255,175,0,.1); }
+}
+
+@keyframes btnShimmer {
+  0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  8%   { opacity: 1; }
+  40%  { transform: translateX(220%)  skewX(-15deg); opacity: 0; }
+  100% { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
 }
 
 /* ── Botón fantasma ── */
@@ -20,13 +52,15 @@
   font-family: 'Barlow Condensed', sans-serif;
   font-size: .9rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
   padding: 1rem 2.5rem;
-  background: transparent; color: var(--dorado-claro);
-  border: 1px solid var(--dorado); cursor: pointer;
+  background: #ffffff; color: #1a0800;
+  border: 1px solid #6b0a00; cursor: pointer;
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  transition: all .25s; text-decoration: none; display: inline-block;
+  transition: all .25s; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
 }
 .btn-ghost:hover {
-  background: rgba(200, 137, 10, .1);
+  background: #f5f0e8;
   box-shadow: 0 0 20px rgba(200, 137, 10, .3);
   transform: translateY(-3px);
 }
@@ -40,10 +74,37 @@
   color: var(--blanco); border: none; cursor: pointer;
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   box-shadow: 0 8px 25px rgba(37, 211, 102, .3);
-  transition: all .25s; display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
+  transition: all .35s; display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
+  /* Estado inicial: sin número elegido */
+  opacity: .35;
+  filter: grayscale(.6);
+  pointer-events: none;
+}
+.btn-wa.wa-ready {
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+  animation: btnPulse 1.8s ease-in-out infinite;
 }
 .btn-wa:hover {
   background: linear-gradient(135deg, #2ee873, #25D366);
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(37, 211, 102, .45);
+}
+.btn-wa.wa-cta {
+  animation: waShake .4s ease-in-out 2,
+             waGlow  1.4s ease-in-out 3 .8s;
+}
+@keyframes waShake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-6px) rotate(-1deg); }
+  40%     { transform: translateX(6px)  rotate(1deg); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+@keyframes waGlow {
+  0%, 100% { box-shadow: 0 8px 25px rgba(37,211,102,.3); }
+  50%      { box-shadow: 0 0 0 6px rgba(37,211,102,.35),
+                         0 0 40px rgba(37,211,102,.8),
+                         0 0 80px rgba(37,211,102,.4); }
 }

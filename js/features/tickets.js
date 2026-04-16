@@ -68,7 +68,7 @@ export function genRand() {
 }
 
 // ── Verificación de número manual ────────────────────────────────
-export function checkT(v) {
+export function checkT(v, suppressPulse = false) {
   const n      = parseInt(v, 10);
   const status = document.getElementById('t-status');
 
@@ -90,7 +90,7 @@ export function checkT(v) {
     status.className   = 'ok';
     selected           = n;
     playSelect();
-    _highlightGrid(n);
+    if (!suppressPulse) setTimeout(_pulseWA, 300);
   }
 
   _updateWA();
@@ -150,12 +150,23 @@ function _updateWA() {
     const msg = encodeURIComponent(
       `¡Hola! Quiero apartar el boleto *${String(selected).padStart(3, '0')}* de la Rifa Suzuki Swift 2026. ¿Está disponible? 🚗🔥`
     );
-    btn.href            = `https://wa.me/${WA_NUM}?text=${msg}`;
-    btn.style.animation = 'pulse 1.8s infinite';
+    btn.href = `https://wa.me/${WA_NUM}?text=${msg}`;
+    btn.classList.add('wa-ready');
   } else {
-    btn.href            = `https://wa.me/${WA_NUM}`;
+    btn.href = `https://wa.me/${WA_NUM}`;
+    btn.classList.remove('wa-ready', 'wa-cta');
     btn.style.animation = '';
   }
+}
+
+function _pulseWA() {
+  const btn = document.getElementById('wa-btn');
+  if (!btn) return;
+  btn.classList.remove('wa-cta');
+  void btn.offsetWidth;                   // fuerza reflow para reiniciar animación
+  btn.classList.add('wa-cta');
+  // waShake: 0.4s × 2 = 0.8s | waGlow: delay 0.8s + 1.4s × 3 = 5s total
+  setTimeout(() => btn.classList.remove('wa-cta'), 5100);
 }
 
 function _pickGrid(n) {
@@ -164,18 +175,39 @@ function _pickGrid(n) {
 
   const input = document.getElementById('minput');
   input.value = n;
-  checkT(String(n));
+  checkT(String(n), true);  // suppressPulse: _pickGrid maneja su propio timing
 
   // Render primero — estabiliza el DOM antes de hacer scroll.
   // Si se llama después, el reflow de 1100 celdas desplaza el destino.
   renderGrid(curFilter, document.getElementById('sinput').value);
 
   document.getElementById('comprar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Tras el scroll, llamar la atención sobre el botón de apartar
+  setTimeout(_pulseWA, 600);
 }
 
 function _highlightGrid(n) {
   renderGrid(curFilter, document.getElementById('sinput').value);
 
   const el = document.querySelector(`.tnum[data-n="${n}"]`);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (!el) return;
+
+  // 1. Scroll a la sección del grid
+  document.getElementById('disponibles')
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // 2. Scroll interno del grid: centrar el boleto
+  const grid = el.closest('.tgrid');
+  if (grid) {
+    const top = el.offsetTop - grid.clientHeight / 2.3 + el.offsetHeight / 2;
+    grid.scrollTo({ top, behavior: 'smooth' });
+  }
+
+  // 3. Tras mostrar el boleto, regresar a #comprar y pulsar WA
+  setTimeout(() => {
+    document.getElementById('comprar')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(_pulseWA, 1200);  // esperar que el scroll termine
+  }, 1800);
 }

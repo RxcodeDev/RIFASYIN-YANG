@@ -15,9 +15,9 @@
     "ctaSecondary": { "label": "Ver Disponibles", "href": "#disponibles" }
   },
   "prizes": [
-    { "place": "1er Lugar", "medal": "trophy", "amount": "SWIFT",   "label": "Suzuki Swift 2026" },
-    { "place": "2do Lugar", "medal": "medal1", "amount": "$10K",    "label": "Pesos en efectivo" },
-    { "place": "3\u00b0\u201310\u00b0",  "medal": "star",   "amount": "$3K",     "label": "c/u en efectivo" }
+    { "place": "1er Lugar", "medal": "car",      "amount": "SWIFT",   "label": "Suzuki Swift 2026" },
+    { "place": "2do Lugar", "medal": "banknote", "amount": "$10K",    "label": "Pesos en efectivo" },
+    { "place": "3\u00b0\u201310\u00b0",  "medal": "coins",   "amount": "$3K",     "label": "c/u en efectivo" }
   ],
   "ticket": {
     "price": "$550",
@@ -25,7 +25,7 @@
     "priceLabel": "Precio por boleto",
     "sectionEyebrow": "Participar ahora",
     "sectionTitle": "ELIGE TU NÚMERO",
-    "noteText": "Contáctanos por WhatsApp para confirmar disponibilidad y datos de pago:<br><a href=\"https://wa.me/523348179129\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 334 817 9129</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523314895478\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 331 489 5478</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523329624753\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--dorado)\">📱 332 962 4753</a>",
+    "noteText": "Contáctanos por WhatsApp para confirmar disponibilidad y datos de pago:<br><a href=\"https://wa.me/523348179129\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">334 817 9129</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523314895478\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">331 489 5478</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523329624753\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">332 962 4753</a>",
     "noteHighlight": "¡Los boletos se reservan por orden de llegada!",
     "waButtonLabel": "Apartar por WhatsApp",
     "randHint": "Presiona el botón para generar",
