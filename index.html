@@ -6,6 +6,7 @@
   <title>Rifa Oficial</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
 <body>
 
@@ -55,10 +56,45 @@
 <!-- STATS -->
 <div class="stats-bar">
   <div class="stat"><span class="stat-n">1,100</span><span class="stat-l">Boletos totales</span></div>
-  <div class="stat"><span class="stat-n" id="sn-sold">—</span><span class="stat-l">Vendidos</span></div>
-  <div class="stat"><span class="stat-n" id="sn-avail">—</span><span class="stat-l">Disponibles</span></div>
+  <div class="stat"><span class="stat-n">$550</span><span class="stat-l">Por boleto</span></div>
+  <div class="stat">
+    <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 10h-2v7h2v-7zm6 0h-2v7h2v-7zm8.5 9H2v2h19v-2zm-2.5-9h-2v7h2v-7zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg>
+    <span class="stat-l">Facilidad de pago</span>
+  </div>
   <div class="stat"><span class="stat-n">10</span><span class="stat-l">Ganadores</span></div>
 </div>
+
+<!-- GALERÍA -->
+<!-- GALERÍA + VIDEO -->
+<section class="section slider-section" id="galeria">
+  <span class="section-eyebrow">¡Mira lo que puedes ganar!</span>
+  <h2 class="section-title">TU PRÓXIMO <span class="g">AUTO</span></h2>
+  <div class="media-grid">
+    <div class="slider" id="slider" role="region" aria-label="Galería del premio">
+      <div class="slider-track" id="sliderTrack">
+        <figure class="slide"><img src="assets/img/1.jpeg" alt="Suzuki Swift 2026 — vista 1" loading="lazy"></figure>
+        <figure class="slide"><img src="assets/img/2.jpeg" alt="Suzuki Swift 2026 — vista 2" loading="lazy"></figure>
+        <figure class="slide"><img src="assets/img/3.jpeg" alt="Suzuki Swift 2026 — vista 3" loading="lazy"></figure>
+      </div>
+      <button class="slider-btn slider-prev" id="sliderPrev" aria-label="Anterior">&#8249;</button>
+      <button class="slider-btn slider-next" id="sliderNext" aria-label="Siguiente">&#8250;</button>
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+    <div class="slider video-container">
+      <video
+        id="prizeVideo"
+        src="assets/img/video.mp4"
+        controls
+        playsinline
+        muted
+        loop
+        preload="metadata"
+        poster="assets/img/1.jpeg"
+        aria-label="Video del Suzuki Swift 2026"
+      ></video>
+    </div>
+  </div>
+</section>
 
 <!-- COMPRAR -->
 <section class="section ticket-section" id="comprar">
@@ -147,7 +183,10 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="f-logo"><!-- renderer.js --></div>
+  <div class="f-brand">
+    <img class="f-logo-img" src="assets/logo.png" alt="Rifas Yin &amp; Yang">
+    <span class="f-logo"><!-- renderer.js --></span>
+  </div>
   <div class="f-text"><!-- renderer.js --></div>
 </footer>
 

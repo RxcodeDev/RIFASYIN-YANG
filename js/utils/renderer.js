@@ -211,8 +211,7 @@ export function renderFooter(footer) {
 
   if (logo) {
     logo.innerHTML = '';
-    logo.appendChild(icon('flame', 'sicon'));
-    logo.append(` ${footer.brand}`);
+    logo.append(footer.brand);
   }
   if (text) text.innerHTML = `${footer.copyright}<br>
     <span style="font-size:.6rem;opacity:.6">${footer.note}</span>`;

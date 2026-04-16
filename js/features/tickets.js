@@ -9,8 +9,10 @@ let spinning  = false; // guard para genRand: evita intervalos concurrentes
 
 // ── Stats ─────────────────────────────────────────────────────────
 export function updateStats() {
-  document.getElementById('sn-sold').textContent  = SOLD.size;
-  document.getElementById('sn-avail').textContent = TOTAL - SOLD.size;
+  const sold  = document.getElementById('sn-sold');
+  const avail = document.getElementById('sn-avail');
+  if (sold)  sold.textContent  = SOLD.size;
+  if (avail) avail.textContent = TOTAL - SOLD.size;
 }
 
 // ── Cambio de modo (aleatorio ↔ manual) ───────────────────────────

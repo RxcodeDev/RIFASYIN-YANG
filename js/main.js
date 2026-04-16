@@ -48,6 +48,79 @@ async function bootstrap() {
   document.querySelectorAll('.f-btn').forEach(btn => {
     btn.addEventListener('click', () => filterBy(btn.dataset.filter));
   });
+
+  // ── Slider de galería ──────────────────────────────────────────
+  initSlider();
+  initVideoAutoplay();
+}
+
+function initSlider() {
+  const track  = document.getElementById('sliderTrack');
+  const prev   = document.getElementById('sliderPrev');
+  const next   = document.getElementById('sliderNext');
+  const dotsEl = document.getElementById('sliderDots');
+  if (!track) return;
+
+  const slides = track.querySelectorAll('.slide');
+  const total  = slides.length;
+  let current  = 0;
+  let autoplay;
+
+  // Crear dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', `Ir a imagen ${i + 1}`);
+    dot.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    dotsEl.querySelectorAll('.slider-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === current)
+    );
+    resetAutoplay();
+  }
+
+  function resetAutoplay() {
+    clearInterval(autoplay);
+    autoplay = setInterval(() => goTo(current + 1), 4000);
+  }
+
+  prev.addEventListener('click', () => goTo(current - 1));
+  next.addEventListener('click', () => goTo(current + 1));
+
+  // Swipe táctil
+  let startX = 0;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+  });
+
+  resetAutoplay();
+}
+
+function initVideoAutoplay() {
+  const video = document.getElementById('prizeVideo');
+  if (!video) return;
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+
+  observer.observe(video);
 }
 
 document.addEventListener('DOMContentLoaded', bootstrap);

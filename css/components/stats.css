@@ -25,6 +25,12 @@
   color: var(--crema); margin-top: .2rem; display: block;
 }
 
+.stat-icon {
+  width: 3rem; height: 3rem; display: block; margin: 0 auto .3rem;
+  color: var(--oro);
+  fill: var(--oro);
+}
+
 @media (max-width: 768px) {
   .stats-bar   { flex-wrap: wrap; }
   .stat        { flex: 1 1 40%; }

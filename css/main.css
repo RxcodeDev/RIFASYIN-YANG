@@ -29,4 +29,5 @@
 @import './components/ticket-card.css' layer(components);
 @import './components/ticket-grid.css' layer(components);
 @import './components/social.css'      layer(components);
+@import './components/slider.css'      layer(components);
 @import './components/footer.css'      layer(components);

@@ -13,7 +13,7 @@
 let _ctx = null;
 
 function ctx() {
-  if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!_ctx) return null;
   if (_ctx.state === 'suspended') _ctx.resume();
   return _ctx;
 }
@@ -25,13 +25,14 @@ function ctx() {
  * Se registra una sola vez en document; después de desbloqueado se auto-elimina.
  */
 export function unlockAudio() {
-  if (_ctx) return; // ya desbloqueado
-  const c = ctx();  // crea el contexto dentro del gesto
-  // Reproduce un buffer silencioso: fuerza a iOS a marcar el contexto como "allowed"
-  const buf = c.createBuffer(1, 1, 22050);
-  const src = c.createBufferSource();
+  if (_ctx) return;
+  _ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_ctx.state === 'suspended') _ctx.resume();
+  // Buffer silencioso: fuerza a iOS a marcar el contexto como "allowed"
+  const buf = _ctx.createBuffer(1, 1, 22050);
+  const src = _ctx.createBufferSource();
   src.buffer = buf;
-  src.connect(c.destination);
+  src.connect(_ctx.destination);
   src.start(0);
 }
 
@@ -83,7 +84,7 @@ function _voice(c, dest, { type = 'sine', freq, detune = 0,
 // dando sensación alegre de "subiendo" mientras gira la ruleta.
 // progress 0→1 recorre la escala C4→C5 (8 notas cíclicas).
 export function playTick(progress = 0) {
-  const c   = ctx();
+  const c = ctx(); if (!c) return;
   const now = c.currentTime;
 
   // Escala mayor C4: Do Re Mi Fa Sol La Si Do (C4→C5)
@@ -116,7 +117,7 @@ export function playTick(progress = 0) {
 // Redoble ascendente rápido (Do→Mi→Sol→Do→Mi→Sol) + golpe de acorde
 // final con reverb → claramente festivo / "¡ganaste!".
 export function playWin() {
-  const c   = ctx();
+  const c = ctx(); if (!c) return;
   const now = c.currentTime;
   const rev = _reverb(c, 0.4);
 
@@ -165,7 +166,7 @@ export function playWin() {
 // ── Moneda / selección disponible ────────────────────────────────
 // Tono de moneda de casino: ataque rápido brillante + cola larga dorada.
 export function playSelect() {
-  const c   = ctx();
+  const c = ctx(); if (!c) return;
   const now = c.currentTime;
   const rev = _reverb(c, 0.25);
 
@@ -180,7 +181,7 @@ export function playSelect() {
 // ── Error (número vendido) ────────────────────────────────────────
 // Descenso suave — no harsh, pero claro: "no disponible".
 export function playError() {
-  const c   = ctx();
+  const c = ctx(); if (!c) return;
   const now = c.currentTime;
 
   const osc  = c.createOscillator();

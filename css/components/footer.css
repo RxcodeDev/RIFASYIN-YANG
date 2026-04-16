@@ -1,15 +1,46 @@
 footer {
-  background: var(--negro);
-  border-top: 1px solid rgba(200, 137, 10, .2);
-  padding: 1.8rem 5vw;
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 1rem;
-  position: relative; z-index: 5;
+  background: #0a0000;
+  border-top: 2px solid var(--dorado);
+  padding: 2.5rem 5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 5;
+}
+
+.f-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.f-logo-img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--dorado) 40%, transparent));
 }
 
 .f-logo {
-  font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 3px;
+  font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 3px;
   background: linear-gradient(135deg, var(--oro), var(--dorado));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1.1;
 }
-.f-text { font-size: .7rem; color: var(--crema); letter-spacing: 1px; text-align: right; }
+
+.f-text {
+  font-size: .7rem;
+  color: var(--crema);
+  letter-spacing: 1px;
+  text-align: right;
+  opacity: .8;
+  line-height: 1.8;
+}
+
+@media (max-width: 600px) {
+  footer { justify-content: center; }
+  .f-text { text-align: center; }
+}
