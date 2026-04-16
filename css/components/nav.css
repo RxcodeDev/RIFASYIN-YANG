@@ -52,3 +52,145 @@ nav {
   .nav-logo-img { height: 36px; width: 36px; }
   .nav-brand-name { font-size: 1rem; }
 }
+
+/* ── Botón Mi Boleto ── */
+.nav-status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, var(--oro), var(--dorado));
+  border: none;
+  border-radius: 4px;
+  padding: .45rem .9rem;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  white-space: nowrap;
+  line-height: 1;
+}
+.nav-status-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ── Modal backdrop ── */
+.status-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  backdrop-filter: blur(4px);
+}
+.status-backdrop[hidden] { display: none; }
+
+.status-modal {
+  background: linear-gradient(160deg, #1a0500, #0a0000);
+  border: 1px solid var(--dorado);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: min(420px, 90vw);
+  position: relative;
+  text-align: center;
+}
+
+.status-close {
+  position: absolute;
+  top: .8rem; right: 1rem;
+  background: none;
+  border: none;
+  color: var(--crema);
+  font-size: 1.6rem;
+  cursor: pointer;
+  line-height: 1;
+  opacity: .6;
+  transition: opacity .2s;
+}
+.status-close:hover { opacity: 1; }
+
+.status-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: var(--crema);
+  margin-bottom: .4rem;
+}
+
+.status-sub {
+  font-size: .8rem;
+  color: var(--crema);
+  opacity: .6;
+  margin-bottom: 1.5rem;
+}
+
+.status-input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--dorado) 50%, transparent);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+}
+
+.status-hash {
+  padding: 0 .8rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--dorado);
+  border-right: 1px solid color-mix(in srgb, var(--dorado) 30%, transparent);
+}
+
+.status-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--crema);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 4px;
+  padding: .6rem .8rem;
+  outline: none;
+  text-align: center;
+}
+.status-input::-webkit-outer-spin-button,
+.status-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.status-result {
+  margin-top: 1.2rem;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: background .3s;
+}
+
+.status-result.libre {
+  background: rgba(34, 197, 94, .12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, .3);
+  padding: .8rem;
+}
+
+.status-result.vendido {
+  background: rgba(239, 68, 68, .12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, .3);
+  padding: .8rem;
+}
+
+.status-result.invalid {
+  background: rgba(251, 191, 36, .08);
+  color: var(--dorado);
+  border: 1px solid rgba(251, 191, 36, .2);
+  padding: .8rem;
+}

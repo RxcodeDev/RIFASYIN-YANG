@@ -17,7 +17,25 @@
 <nav>
   <div class="nav-logo"><!-- renderer.js --></div>
   <ul class="nav-links"><!-- renderer.js --></ul>
+  <button class="nav-status-btn" id="btnMiBoleto" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="15" height="15" style="flex-shrink:0;display:block"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    Mi Boleto
+  </button>
 </nav>
+
+<!-- MODAL MI BOLETO -->
+<div class="status-backdrop" id="statusBackdrop" role="dialog" aria-modal="true" aria-label="Consultar mi boleto" hidden>
+  <div class="status-modal">
+    <button class="status-close" id="statusClose" aria-label="Cerrar">&times;</button>
+    <h3 class="status-title">CONSULTA TU <span class="g">BOLETO</span></h3>
+    <p class="status-sub">Ingresa tu número para ver su estado actual.</p>
+    <div class="status-input-wrap">
+      <span class="status-hash">#</span>
+      <input type="number" id="statusInput" class="status-input" placeholder="000" min="1" max="1100" autocomplete="off">
+    </div>
+    <div class="status-result" id="statusResult" role="status" aria-live="polite"></div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="inicio">
@@ -167,7 +185,6 @@
     </div>
 
     <div class="tgrid" id="tgrid"></div>
-    <div class="gcounter" id="gcnt"></div>
 
   </div>
 </section>

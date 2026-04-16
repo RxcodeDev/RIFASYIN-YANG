@@ -124,7 +124,8 @@ export function renderGrid(filter = 'all', search = '') {
     shown++;
   }
 
-  document.getElementById('gcnt').textContent =
+  const gcnt = document.getElementById('gcnt');
+  if (gcnt) gcnt.textContent =
     `Mostrando ${shown} · ${TOTAL - SOLD.size} disponibles de ${TOTAL}`;
 }
 

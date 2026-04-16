@@ -4,6 +4,7 @@ import { renderNav, renderHero, renderPrizes,
          renderFooter, renderPageMeta }                    from './utils/renderer.js';
 import { updateStats, setMode, genRand, checkT,
          renderGrid, filterBy, filterG }                   from './features/tickets.js';
+import { SOLD }                                            from './config.js';
 import { unlockAudio }                                     from './utils/sounds.js';
 
 async function bootstrap() {
@@ -52,6 +53,9 @@ async function bootstrap() {
   // ── Slider de galería ──────────────────────────────────────────
   initSlider();
   initVideoAutoplay();
+
+  // ── Modal Mi Boleto ────────────────────────────────────────────
+  initStatusModal();
 }
 
 function initSlider() {
@@ -121,6 +125,54 @@ function initVideoAutoplay() {
   );
 
   observer.observe(video);
+}
+
+function initStatusModal() {
+  const backdrop = document.getElementById('statusBackdrop');
+  const btnOpen  = document.getElementById('btnMiBoleto');
+  const btnClose = document.getElementById('statusClose');
+  const input    = document.getElementById('statusInput');
+  const result   = document.getElementById('statusResult');
+  if (!backdrop) return;
+
+  function open() {
+    backdrop.hidden = false;
+    input.value = '';
+    result.className = 'status-result';
+    result.textContent = '';
+    requestAnimationFrame(() => input.focus());
+  }
+
+  function close() {
+    backdrop.hidden = true;
+  }
+
+  function check() {
+    const n = parseInt(input.value, 10);
+    result.className = 'status-result';
+    result.textContent = '';
+
+    if (!n || n < 1 || n > 1100) {
+      result.className = 'status-result invalid';
+      result.textContent = 'Ingresa un número del 1 al 1100';
+      return;
+    }
+
+    const num = String(n).padStart(3, '0');
+    if (SOLD.has(n)) {
+      result.className = 'status-result vendido';
+      result.innerHTML = `Boleto #${num} &mdash; Apartado / Vendido`;
+    } else {
+      result.className = 'status-result libre';
+      result.innerHTML = `Boleto #${num} &mdash; Disponible`;
+    }
+  }
+
+  btnOpen.addEventListener('click', open);
+  btnClose.addEventListener('click', close);
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  input.addEventListener('input', check);
 }
 
 document.addEventListener('DOMContentLoaded', bootstrap);
