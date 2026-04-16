@@ -4,8 +4,9 @@ import { renderNav, renderHero, renderPrizes,
          renderFooter, renderPageMeta }                    from './utils/renderer.js';
 import { updateStats, setMode, genRand, checkT,
          renderGrid, filterBy, filterG }                   from './features/tickets.js';
-import { SOLD }                                            from './config.js';
+import { SOLD, setSold }                                    from './config.js';
 import { unlockAudio }                                     from './utils/sounds.js';
+import { sheets }                                          from './panel/api.js';
 
 async function bootstrap() {
   // ── Cargar contenido desde JSON ────────────────────────────────
@@ -28,9 +29,22 @@ async function bootstrap() {
   // ── Partículas decorativas ─────────────────────────────────────
   initSparks();
 
-  // ── Lógica de boletos ──────────────────────────────────────────
+  // ── Lógica de boletos (datos hardcode mientras carga API) ─────────
   updateStats();
   renderGrid();
+
+  // ── Sincronizar SOLD desde Google Sheets (no-bloqueante) ────────
+  sheets.getAll().then(rows => {
+    const liveSold = new Set(
+      rows
+        .filter(r => (r['Estado Boleto'] || '').trim() !== 'Disponible')
+        .map(r => parseInt(r['No. Boleto'], 10))
+        .filter(n => !isNaN(n))
+    );
+    setSold(liveSold);
+    updateStats();
+    renderGrid();
+  }).catch(() => { /* API no disponible — se mantiene el fallback hardcodeado */ });
 
   // ── Tabs de modo (aleatorio / manual) ─────────────────────────
   document.querySelectorAll('.mode-tab').forEach(btn => {

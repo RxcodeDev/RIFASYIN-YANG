@@ -9,7 +9,8 @@ export const WA_NUM = '523348179129';
 
 /**
  * Boletos ya vendidos/apartados.
- * Agrega o quita números según las ventas confirmadas.
+ * Se carga en vivo desde Google Sheets al iniciar; estos valores son el
+ * fallback para cuando la API no esté disponible.
  * @type {Set<number>}
  */
 export const SOLD = new Set([
@@ -17,3 +18,14 @@ export const SOLD = new Set([
   333, 400, 444, 500, 555, 600, 666, 700, 750, 777,
   800, 850, 900, 950, 999, 1000, 1050, 1080, 1090, 1100,
 ]);
+
+/**
+ * Reemplaza el contenido de SOLD con los números recibidos.
+ * Muta el mismo Set para que todos los módulos que lo importaron
+ * vean el cambio sin necesidad de re-importar.
+ * @param {Iterable<number>} nums
+ */
+export function setSold(nums) {
+  SOLD.clear();
+  for (const n of nums) SOLD.add(n);
+}
