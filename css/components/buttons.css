@@ -108,3 +108,40 @@
                          0 0 40px rgba(37,211,102,.8),
                          0 0 80px rgba(37,211,102,.4); }
 }
+
+/* ── Botón Comprar Directo ── */
+.btn-buy {
+  font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
+  letter-spacing: 3px; text-transform: uppercase; font-weight: 800;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #e03535, #a51212);
+  color: var(--blanco); border: none; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 8px 25px rgba(224, 53, 53, .3);
+  transition: all .35s; display: inline-flex; align-items: center; gap: .6rem;
+  opacity: .35;
+  filter: grayscale(.6);
+  pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-buy.buy-ready {
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+  animation: btnPulse 1.8s ease-in-out infinite;
+}
+.btn-buy:hover {
+  background: linear-gradient(135deg, #f04040, #c01818);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(224, 53, 53, .45);
+}
+.btn-buy.buy-cta {
+  animation: waShake .4s ease-in-out 2,
+             buyGlow  1.4s ease-in-out 3 .8s;
+}
+@keyframes buyGlow {
+  0%, 100% { box-shadow: 0 8px 25px rgba(224,53,53,.3); }
+  50%      { box-shadow: 0 0 0 6px rgba(224,53,53,.35),
+                         0 0 40px rgba(224,53,53,.8),
+                         0 0 80px rgba(224,53,53,.4); }
+}

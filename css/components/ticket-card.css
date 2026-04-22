@@ -81,8 +81,14 @@
 
 /* ── Acciones ── */
 .ticket-actions {
-  margin-top: 2rem; display: flex; gap: 1rem;
-  justify-content: center; flex-wrap: wrap;
+  margin-top: 2rem; display: flex; gap: .75rem;
+  justify-content: center;
+}
+.ticket-actions .btn-wa,
+.ticket-actions .btn-buy {
+  flex: 1;
+  justify-content: center;
+  padding: 1rem 1.2rem;
 }
 
 /* ── Nota ── */

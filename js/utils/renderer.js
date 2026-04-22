@@ -163,6 +163,14 @@ export function renderTicketSection(ticket) {
     waBtn.append(` ${ticket.waButtonLabel}`);
   }
 
+  // Botón comprar directo
+  const buyBtn = document.getElementById('buy-btn');
+  if (buyBtn && ticket.buyButtonLabel) {
+    buyBtn.innerHTML = '';
+    buyBtn.appendChild(icon('ticket', 'sicon'));
+    buyBtn.append(` ${ticket.buyButtonLabel}`);
+  }
+
   // Nota
   const note = document.querySelector('.ticket-note');
   if (note) {

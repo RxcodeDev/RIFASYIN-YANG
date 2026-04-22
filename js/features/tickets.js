@@ -7,6 +7,9 @@ let mode      = 'r';   // 'r' aleatorio | 'm' manual
 let curFilter = 'all'; // 'all' | 'av' | 'tk'
 let spinning  = false; // guard para genRand: evita intervalos concurrentes
 
+/** Devuelve el número de boleto actualmente seleccionado (null si ninguno). */
+export function getSelected() { return selected; }
+
 // ── Stats ─────────────────────────────────────────────────────────
 export function updateStats() {
   const sold  = document.getElementById('sn-sold');
@@ -147,7 +150,8 @@ export function filterG(value) {
 // ── Privadas ──────────────────────────────────────────────────────
 
 function _updateWA() {
-  const btn = document.getElementById('wa-btn');
+  const btn    = document.getElementById('wa-btn');
+  const buyBtn = document.getElementById('buy-btn');
 
   if (selected) {
     const msg = encodeURIComponent(
@@ -155,21 +159,31 @@ function _updateWA() {
     );
     btn.href = `https://wa.me/${WA_NUM}?text=${msg}`;
     btn.classList.add('wa-ready');
+    if (buyBtn) buyBtn.classList.add('buy-ready');
   } else {
     btn.href = `https://wa.me/${WA_NUM}`;
     btn.classList.remove('wa-ready', 'wa-cta');
     btn.style.animation = '';
+    if (buyBtn) buyBtn.classList.remove('buy-ready');
   }
 }
 
 function _pulseWA() {
-  const btn = document.getElementById('wa-btn');
+  const btn    = document.getElementById('wa-btn');
+  const buyBtn = document.getElementById('buy-btn');
   if (!btn) return;
   btn.classList.remove('wa-cta');
   void btn.offsetWidth;                   // fuerza reflow para reiniciar animación
   btn.classList.add('wa-cta');
   // waShake: 0.4s × 2 = 0.8s | waGlow: delay 0.8s + 1.4s × 3 = 5s total
   setTimeout(() => btn.classList.remove('wa-cta'), 5100);
+
+  if (buyBtn) {
+    buyBtn.classList.remove('buy-cta');
+    void buyBtn.offsetWidth;
+    buyBtn.classList.add('buy-cta');
+    setTimeout(() => buyBtn.classList.remove('buy-cta'), 5100);
+  }
 }
 
 function _pickGrid(n) {

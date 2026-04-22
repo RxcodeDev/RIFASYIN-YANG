@@ -28,11 +28,17 @@
     "noteText": "Contáctanos por WhatsApp para confirmar disponibilidad y datos de pago:<br><a href=\"https://wa.me/523348179129\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">334 817 9129</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523314895478\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">331 489 5478</a> &nbsp;·&nbsp; <a href=\"https://wa.me/523329624753\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"note-phone\">332 962 4753</a>",
     "noteHighlight": "¡Los boletos se reservan por orden de llegada!",
     "waButtonLabel": "Apartar por WhatsApp",
+    "buyButtonLabel": "Comprar directo en sitio",
     "randHint": "Presiona el botón para generar",
     "randButtonLabel": "Generar Número",
     "manualTabLabel": "Elegir Número",
     "randomTabLabel": "Número Aleatorio",
-    "rangeHint": "Número del 001 al 1100"
+    "rangeHint": "Número del 001 al 1100",
+    "bbvaClabe": "012320001234567890",
+    "bbvaCuenta": "1234567890",
+    "bbvaHolder": "NOMBRE DEL TITULAR",
+    "ticketPrice": 550,
+    "mpLink": "https://link.mercadopago.com.mx/tuenlace"
   },
   "social": {
     "eyebrow": "Síguenos",

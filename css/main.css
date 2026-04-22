@@ -31,3 +31,4 @@
 @import './components/social.css'      layer(components);
 @import './components/slider.css'      layer(components);
 @import './components/footer.css'      layer(components);
+@import './components/buy-modal.css'   layer(components);

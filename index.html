@@ -191,6 +191,7 @@
 
       <div class="ticket-actions">
         <a class="btn-wa" id="wa-btn" href="#" target="_blank" rel="noopener noreferrer"><!-- renderer.js --></a>
+        <button class="btn-buy" id="buy-btn" type="button"><!-- renderer.js --></button>
       </div>
 
       <div class="ticket-note"><!-- renderer.js --></div>
@@ -247,6 +248,83 @@
   </div>
   <div class="f-text"><!-- renderer.js --></div>
 </footer>
+
+<!-- MODAL COMPRAR DIRECTO -->
+<div class="buy-backdrop" id="buyBackdrop" role="dialog" aria-modal="true" aria-labelledby="buyTitle" hidden>
+  <div class="buy-modal">
+    <button class="buy-close" id="buyClose" aria-label="Cerrar">&times;</button>
+
+    <h3 class="buy-modal-title" id="buyTitle">COMPRAR <span class="g">BOLETO</span></h3>
+
+    <!-- Tarjeta BBVA -->
+    <div class="bbva-card">
+      <div class="bbva-card-top">
+        <span class="bbva-bank">BBVA</span>
+        <div class="bbva-chip"></div>
+      </div>
+      <div class="bbva-card-body">
+        <div class="bbva-field">
+          <span class="bbva-lbl">Número de cuenta</span>
+          <div class="bbva-val-wrap">
+            <span class="bbva-val" id="bbvaCuenta"><!-- renderer.js --></span>
+            <button class="bbva-copy" type="button" data-copy="bbvaCuenta">Copiar</button>
+          </div>
+        </div>
+        <div class="bbva-field">
+          <span class="bbva-lbl">Titular</span>
+          <div class="bbva-val-wrap">
+            <span class="bbva-val bbva-val--name" id="bbvaHolder"><!-- renderer.js --></span>
+            <button class="bbva-copy" type="button" data-copy="bbvaHolder">Copiar</button>
+          </div>
+        </div>
+      </div>
+      <div class="bbva-card-footer">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true" style="flex-shrink:0"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
+        <span>Transfiere exactamente <strong>$550 MXN</strong> y sube el comprobante</span>
+      </div>
+    </div>
+
+    <!-- Formulario de registro -->
+    <form class="buy-form" id="buyForm" novalidate>
+      <div class="buy-field">
+        <label class="buy-label" for="buyName">Nombre completo *</label>
+        <input type="text" id="buyName" class="buy-input" placeholder="Tu nombre completo" autocomplete="name" required>
+      </div>
+      <div class="buy-field">
+        <label class="buy-label" for="buyPhone">Teléfono *</label>
+        <input type="tel" id="buyPhone" class="buy-input" placeholder="3310000000" maxlength="10" inputmode="tel" required>
+      </div>
+      <div class="buy-field">
+        <label class="buy-label" for="buyTicket">No. boleto *</label>
+        <input type="number" id="buyTicket" class="buy-input" placeholder="001 – 1100" min="1" max="1100" inputmode="numeric" required>
+      </div>
+      <div class="buy-field">
+        <label class="buy-label">Comprobante de transferencia *</label>
+        <label class="buy-upload" for="buyCaptura">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26" aria-hidden="true">
+            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 7l-3-3h2v-4h2v4h2l-3 3z"/>
+          </svg>
+          <span id="buyCapturaName">Toca para subir captura o PDF</span>
+        </label>
+        <input type="file" id="buyCaptura" accept="image/*,.pdf" class="buy-file-input" aria-label="Seleccionar comprobante de transferencia">
+      </div>
+      <div class="buy-error" id="buyError" role="alert" aria-live="polite" hidden></div>
+      <div class="buy-success" id="buySuccess" role="status" aria-live="polite" hidden></div>
+      <button class="buy-submit-btn" id="buySubmit" type="submit">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+        Registrar pago
+      </button>
+    </form>
+
+    <!-- Separador Mercado Pago -->
+    <div class="buy-divider"><span>o paga en línea con</span></div>
+    <a class="btn-mp" id="mpBtn" href="#" target="_blank" rel="noopener noreferrer">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Mercado_Pago.svg/3840px-Mercado_Pago.svg.png" alt="Mercado Pago" class="mp-logo" height="22">
+    </a>
+  </div>
+</div>
 
 <script type="module" src="js/main.js"></script>
 </body>

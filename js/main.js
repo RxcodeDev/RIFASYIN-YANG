@@ -7,6 +7,7 @@ import { updateStats, setMode, genRand, checkT,
 import { SOLD, setSold }                                    from './config.js';
 import { unlockAudio }                                     from './utils/sounds.js';
 import { sheets }                                          from './panel/api.js';
+import { initBuyModal }                                    from './features/buy-modal.js';
 
 // Cache de todas las filas del sheet — se usa en el modal de verificación
 let _allRows = [];
@@ -74,6 +75,9 @@ async function bootstrap() {
 
   // ── Modal Mi Boleto ────────────────────────────────────────────
   initStatusModal();
+
+  // ── Modal Comprar Directo ──────────────────────────────────────
+  initBuyModal(data.ticket);
 }
 
 function initSlider() {
