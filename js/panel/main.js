@@ -2,13 +2,14 @@
  * js/panel/main.js
  * Bootstrap: carga datos, enlaza eventos. Sin lógica de negocio aquí.
  */
-import { sheets }          from './api.js';
+import { sheets, getEnv, setEnv }  from './api.js';
 import { setBoletos, getBoletos, setFiltro } from './store.js';
 import {
   renderStats, renderFiltroVendedor, renderTabla, showLoader,
   abrirModalNuevo, abrirModalEditar, cerrarModal,
   getDatosForm, toast, renderDashboard, validateForm,
 } from './ui.js';
+import { initComprobantes, cargarComprobantes } from './comprobantes.js';
 
 // ── Carga de datos ────────────────────────────────────────────────
 async function cargar() {
@@ -73,6 +74,17 @@ function bindEventos() {
   document.getElementById('btn-cancelar').addEventListener('click', cerrarModal);
   document.getElementById('btn-guardar').addEventListener('click', guardar);
 
+  // Selector de entorno (prod / pruebas)
+  const envSelect = document.getElementById('env-select');
+  const _syncEnvStyle = () => envSelect.dataset.env = getEnv();
+  envSelect.value = getEnv();
+  _syncEnvStyle();
+  envSelect.addEventListener('change', async () => {
+    setEnv(envSelect.value);
+    _syncEnvStyle();
+    await cargar();
+  });
+
   // Cerrar modal al clickear el overlay
   document.getElementById('modal-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) cerrarModal();
@@ -85,8 +97,35 @@ function bindEventos() {
     const boleto = getBoletos().find(b => b['No. Boleto'] == btn.dataset.editar);
     if (boleto) abrirModalEditar(boleto);
   });
+
+  // ── Tabs ────────────────────────────────────────────────────────
+  const tabBoletos       = document.getElementById('tab-boletos');
+  const tabComprobantes  = document.getElementById('tab-comprobantes');
+  const viewBoletos      = document.getElementById('split-view');
+  const viewComprobantes = document.getElementById('section-comprobantes');
+  const toolbar          = document.querySelector('.toolbar');
+
+  function activarTab(tab) {
+    const esBoletos = tab === 'boletos';
+
+    tabBoletos.classList.toggle('panel-tab--active', esBoletos);
+    tabBoletos.setAttribute('aria-selected', String(esBoletos));
+    tabComprobantes.classList.toggle('panel-tab--active', !esBoletos);
+    tabComprobantes.setAttribute('aria-selected', String(!esBoletos));
+
+    viewBoletos.hidden      = !esBoletos;
+    viewComprobantes.hidden = esBoletos;
+    // La toolbar solo tiene sentido en la vista de boletos
+    toolbar.hidden = !esBoletos;
+
+    if (!esBoletos) cargarComprobantes();
+  }
+
+  tabBoletos.addEventListener('click',      () => activarTab('boletos'));
+  tabComprobantes.addEventListener('click', () => activarTab('comprobantes'));
 }
 
 // ── Init ──────────────────────────────────────────────────────────
+initComprobantes();
 bindEventos();
 cargar();

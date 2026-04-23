@@ -77,7 +77,8 @@ async function bootstrap() {
   initStatusModal();
 
   // ── Modal Comprar Directo ──────────────────────────────────────
-  initBuyModal(data.ticket);
+  // Se pasa getter en lugar del array directo: _allRows se llena async después del bootstrap.
+  initBuyModal(data.ticket, () => _allRows);
 }
 
 function initSlider() {
@@ -271,21 +272,10 @@ function initStatusModal() {
 
     if (estado === 'Disponible') {
       detailAbonos.innerHTML = '<p class="tl-available-msg">Este boleto está disponible. ¡Apártalo ahora!</p>';
-      detailUpload.hidden    = true;
     } else {
       detailAbonos.innerHTML = buildTimeline(row, estado);
-      if (estado !== 'Pagado') {
-        detailUpload.hidden        = false;
-        fileInput.value            = '';
-        uploadFileName.textContent = 'Toca para seleccionar imagen o PDF';
-        uploadSendBtn.hidden       = true;
-        uploadFeedback.textContent = '';
-        uploadFeedback.className   = 'upload-feedback';
-      } else {
-        detailUpload.hidden = true;
-      }
     }
-  }
+    detailUpload.hidden = true;
 
   function buildTimeline(row, estado) {
     // NOTE: AB1 tiene espacio al final en el sheet — se prueba ambas variantes
@@ -384,7 +374,12 @@ function initStatusModal() {
 
     try {
       const base64 = await fileToBase64(file);
-      await sheets.uploadFile(_currentNum, base64, file.type, file.name);
+      const res    = await fetch('/api/upload', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ numero: _currentNum, base64, mimeType: file.type, nombre: file.name }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       uploadFeedback.className   = 'upload-feedback success';
       uploadFeedback.textContent = '¡Comprobante enviado! Se verificará en máx. 24 hrs.';
       uploadSendBtn.hidden = true;

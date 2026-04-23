@@ -1,0 +1,9 @@
+.git
+.vscode
+figma/
+domain-model.md
+claude.md
+*.md
+upload-server/
+docker-compose.yml
+Dockerfile

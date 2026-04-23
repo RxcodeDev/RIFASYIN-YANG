@@ -37,6 +37,14 @@
       <span class="panel-stat-l">Libres</span>
     </div>
   </div>
+
+  <div class="env-switcher">
+    <label class="env-label" for="env-select">Base de datos</label>
+    <select class="env-select" id="env-select">
+      <option value="prod">Producción</option>
+      <option value="pruebas">Pruebas</option>
+    </select>
+  </div>
 </header>
 
 <!-- TOOLBAR -->
@@ -60,6 +68,18 @@
   <button class="btn btn-primary ml-auto" id="btn-nuevo">+ Nuevo</button>
   <button class="btn btn-ghost" id="btn-recargar" aria-label="Recargar datos">↻</button>
 </div>
+
+<!-- NAV TABS -->
+<nav class="panel-tabs" role="tablist" aria-label="Secciones del panel">
+  <button class="panel-tab panel-tab--active" id="tab-boletos"
+          role="tab" aria-selected="true" aria-controls="split-view">
+    Boletos
+  </button>
+  <button class="panel-tab" id="tab-comprobantes"
+          role="tab" aria-selected="false" aria-controls="section-comprobantes">
+    Comprobantes
+  </button>
+</nav>
 
 <!-- SPLIT VIEW -->
 <div class="split-view" id="split-view">
@@ -134,6 +154,35 @@
 </main>
 
 </div><!-- /split-view -->
+
+<!-- SECCIÓN COMPROBANTES -->
+<section class="section-comprobantes" id="section-comprobantes" hidden aria-label="Comprobantes de pago">
+
+  <div class="cp-toolbar">
+    <input type="search" class="t-input cp-search" id="cp-search"
+           placeholder="Buscar por número de boleto…"
+           inputmode="numeric" autocomplete="off" />
+    <button class="btn btn-ghost" id="cp-recargar" aria-label="Recargar comprobantes">↻</button>
+    <span class="cp-count" id="cp-count"></span>
+  </div>
+
+  <div id="cp-loader" class="loader">
+    <div class="spinner" aria-hidden="true"></div>
+    Cargando comprobantes…
+  </div>
+
+  <div class="cp-grid" id="cp-grid" hidden></div>
+
+  <p class="empty" id="cp-empty" hidden>No hay comprobantes subidos aún.</p>
+
+</section>
+
+<!-- MODAL VISOR COMPROBANTE -->
+<div class="cp-viewer-overlay" id="cp-viewer-overlay" role="dialog"
+     aria-modal="true" aria-label="Vista previa del comprobante" hidden>
+  <button class="cp-viewer-close" id="cp-viewer-close" aria-label="Cerrar">✕</button>
+  <div class="cp-viewer-content" id="cp-viewer-content"></div>
+</div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">

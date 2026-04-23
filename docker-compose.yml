@@ -1,0 +1,29 @@
+services:
+
+  # ── Servidor de archivos estáticos ──────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - upload
+    volumes:
+      # Sirve los uploads generados como archivos estáticos en /uploads/
+      - uploads_data:/usr/share/nginx/html/uploads
+    restart: unless-stopped
+
+  # ── Servidor de subida de archivos ──────────────────────────────────────────
+  upload:
+    build:
+      context: ./upload-server
+      dockerfile: Dockerfile
+    volumes:
+      - uploads_data:/data/uploads
+    # No expone puerto al host — nginx hace el proxy internamente
+    restart: unless-stopped
+
+# ── Volumen compartido persistente ──────────────────────────────────────────
+volumes:
+  uploads_data:

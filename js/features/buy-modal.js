@@ -6,10 +6,12 @@ import { sheets }      from '../panel/api.js';
  * initBuyModal
  * Inicializa el modal de compra directa con transferencia bancaria.
  *
- * @param {object} ticket  - Sección ticket de site.json
+ * @param {object}   ticket    - Sección ticket de site.json
  *   { bbvaClabe, bbvaCuenta, bbvaHolder, ticketPrice, mpLink, waButtonLabel... }
+ * @param {function} getRows   - Getter que retorna el array en vivo de todos los boletos (_allRows).
+ *   Se recibe como función para evitar capturar el valor vacío del bootstrap asíncrono.
  */
-export function initBuyModal(ticket) {
+export function initBuyModal(ticket, getRows = () => []) {
   const backdrop   = document.getElementById('buyBackdrop');
   const btnOpen    = document.getElementById('buy-btn');
   const btnClose   = document.getElementById('buyClose');
@@ -128,23 +130,48 @@ export function initBuyModal(ticket) {
     submitBtn.textContent = 'Enviando…';
 
     try {
-      const now = new Date().toISOString();
+      // ── Derivados de cliente ──────────────────────────────────
+      const rows        = getRows();
+      const clienteId   = _nextClientId(rows);
+      const repetido    = _isRepetido(rows, telefono);
 
-      // 1. Actualizar fila del boleto en el sheet
-      await sheets.updateRecord(boleto, {
-        'Nombre del Comprador': nombre,
-        'Teléfono':             telefono,
-        'Estado Boleto':        'Apartado',
-        'Estado Pago':          'No pagado',
-        'Método de Pago':       'Transfer',
-        'Fecha de Venta':       now,
-        'AB1 ':                 price,   // NOTE: columna con espacio al final (ver domain-model)
-        'Restante ':            0,       // NOTE: ídem
+      // 1. Actualizar fila del boleto en el sheet (best-effort, máx 3s — no bloquea el upload)
+      // NOTE: Fecha de Venta NO se escribe — el sheet tiene la fórmula
+      //   =SI(B<n><>"";HOY();"") que produce un valor fecha nativo cuando se
+      //   escribe Nombre del Comprador. Escribir un string aquí destruye la
+      //   fórmula y provoca #VALUE! en Fecha Límite Apartado (=H<n>+1).
+      // NOTE: Fecha Límite Apartado tampoco se escribe — depende de Fecha de Venta.
+      try {
+        const _sheetTimeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000));
+        await Promise.race([
+          sheets.updateRecord(boleto, {
+            'Nombre del Comprador':  nombre,
+            'Teléfono':              telefono,
+            'Estado Boleto':         'Pagado',
+            'Estado Pago':           'Pagado',
+            'Vendedor':              'Web',
+            'Promotor':              'Web',
+            'Método de Pago':        'Transfer',
+            'Estado Apartado':       'Activo',
+            'ID Cliente':            clienteId,
+            'Cliente Repetido':      repetido ? '⚠️ Repetido' : '',
+            'AB1 ':                  ticket.ticketPrice,
+            'Restante ':             0,
+          }),
+          _sheetTimeout,
+        ]);
+      } catch (sheetErr) {
+        console.warn('[buy-modal] Sheet update falló, continúa con upload:', sheetErr.message);
+      }
+
+      // 2. Subir comprobante al servidor local
+      const base64   = await _fileToBase64(archivo);
+      const uploadRes = await fetch('/api/upload', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ numero: boleto, base64, mimeType: archivo.type, nombre: archivo.name }),
       });
-
-      // 2. Subir comprobante
-      const base64 = await _fileToBase64(archivo);
-      await sheets.uploadFile(boleto, base64, archivo.type, archivo.name);
+      if (!uploadRes.ok) throw new Error(`HTTP ${uploadRes.status}`);
 
       _showSuccess(
         `✓ ¡Listo! Tu comprobante del boleto #${String(boleto).padStart(3,'0')} fue enviado.\n` +
@@ -224,4 +251,28 @@ function _fileToBase64(file) {
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(file);
   });
+}
+
+/** Formatea Date como YYYY-MM-DD (sin hora) — compatible con Google Sheets. */
+function _fmtDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/** Genera el siguiente ID cliente (CL-XXXX) basándose en los datos en memoria. */
+function _nextClientId(rows) {
+  const nums = rows
+    .map(r => r['ID Cliente'])
+    .filter(id => /^CL-\d{4}$/.test(id))
+    .map(id => parseInt(id.slice(3), 10));
+  const max = nums.length ? Math.max(...nums) : 0;
+  return `CL-${String(max + 1).padStart(4, '0')}`;
+}
+
+/** Devuelve true si el teléfono ya existe en otro boleto (cliente repetido). */
+function _isRepetido(rows, telefono) {
+  const norm = String(telefono).replace(/\D/g, '').slice(-10);
+  return rows.some(r => String(r['Teléfono'] ?? '').replace(/\D/g, '').slice(-10) === norm);
 }
