@@ -48,8 +48,8 @@
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: .85rem;
-  background: linear-gradient(135deg, #1251a1 0%, #0a3a80 45%, #062a60 100%);
-  box-shadow: 0 8px 28px rgba(0,40,120,.55), inset 0 1px 0 rgba(255,255,255,.12);
+  background: linear-gradient(135deg, #7b2fc6 0%, #5b1a9e 45%, #3d0f72 100%);
+  box-shadow: 0 8px 28px rgba(90,20,160,.55), inset 0 1px 0 rgba(255,255,255,.12);
   text-align: left;
   position: relative;
 }

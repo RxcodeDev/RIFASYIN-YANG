@@ -25,6 +25,7 @@
 @import './components/nav.css'         layer(components);
 @import './components/hero.css'        layer(components);
 @import './components/stats.css'       layer(components);
+@import './components/promo.css'       layer(components);
 @import './components/buttons.css'     layer(components);
 @import './components/ticket-card.css' layer(components);
 @import './components/ticket-grid.css' layer(components);
