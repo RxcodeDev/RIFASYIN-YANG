@@ -1,0 +1,63 @@
+const HOJA = 'CONTROL DE BOLETOS';
+
+function doGet(e) {
+  const accion = e.parameter.accion;
+  const sheet  = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA);
+  const data   = sheet.getDataRange().getValues();
+  const headers = data[0];
+  let resultado;
+
+  if (accion === 'getAll') {
+    const rows = data.slice(1).map(row =>
+      Object.fromEntries(headers.map((h, i) => [h, row[i]]))
+    );
+    resultado = { ok: true, data: rows };
+  } else if (accion === 'getBoleto') {
+    const numero = parseInt(e.parameter.numero);
+    const row = data.slice(1).find(r => r[0] === numero);
+    resultado = row
+      ? { ok: true, data: Object.fromEntries(headers.map((h, i) => [h, row[i]])) }
+      : { ok: false, error: 'Boleto no encontrado' };
+  } else {
+    resultado = { ok: false, error: 'Accion no valida' };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(resultado))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const body   = JSON.parse(e.postData.contents);
+  const sheet  = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA);
+  const data   = sheet.getDataRange().getValues();
+  const headers = data[0];
+  let resultado;
+
+  if (body.accion === 'actualizar') {
+    const numero   = parseInt(body.numero);
+    const rowIndex = data.findIndex((r, i) => i > 0 && r[0] === numero);
+    if (rowIndex === -1) {
+      resultado = { ok: false, error: 'Boleto no encontrado' };
+    } else {
+      // .trim() en ambos lados — previene fallos por espacios accidentales en headers
+      const colIndex = headers.map(h => h.trim()).indexOf(body.columna.trim());
+      if (colIndex === -1) {
+        resultado = { ok: false, error: 'Columna no encontrada: ' + body.columna };
+      } else {
+        sheet.getRange(rowIndex + 1, colIndex + 1).setValue(body.valor);
+        resultado = { ok: true, mensaje: 'Actualizado correctamente' };
+      }
+    }
+  } else if (body.accion === 'agregar') {
+    const nuevaFila = headers.map(h => body.datos[h] ?? '');
+    sheet.appendRow(nuevaFila);
+    resultado = { ok: true, mensaje: 'Boleto agregado' };
+  } else {
+    resultado = { ok: false, error: 'Accion no valida' };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(resultado))
+    .setMimeType(ContentService.MimeType.JSON);
+}
