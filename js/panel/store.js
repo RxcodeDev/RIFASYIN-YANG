@@ -51,13 +51,25 @@ export function getBoletosFiltrados() {
   });
 }
 
+// Claves de columnas de abonos — 'AB1 ' tiene espacio al final en el sheet
+const AB_KEYS = ['AB1 ','AB2','AB3','AB4','AB5','AB6','AB7','AB8','AB9','AB10','AB11','AB12'];
+
 // ── Stats (derivado) ──────────────────────────────────────────────
 export function getStats() {
+  const vendido = _boletos.filter(b => {
+    // Tiene al menos un abono cargado (cualquier columna AB1-AB12 > 0)
+    const tieneAbono = AB_KEYS.some(k => parseFloat(b[k] ?? b[k.trim()] ?? 0) > 0);
+    // O está Apartado/Pagado (independientemente de abonos)
+    const ocupado = b['Estado Boleto'] === 'Apartado' || b['Estado Boleto'] === 'Pagado';
+    return tieneAbono || ocupado;
+  }).length;
+
   return {
     total:      _boletos.length,
     pagado:     _boletos.filter(b => b['Estado Boleto'] === 'Pagado').length,
     apartado:   _boletos.filter(b => b['Estado Boleto'] === 'Apartado').length,
     disponible: _boletos.filter(b => b['Estado Boleto'] === 'Disponible').length,
+    vendido,
   };
 }
 

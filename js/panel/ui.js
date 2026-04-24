@@ -8,11 +8,12 @@ import { initNumPicker, resetPicker, setPickerValue } from './num-picker.js';
 
 // ── Stats ─────────────────────────────────────────────────────────
 export function renderStats() {
-  const { total, pagado, apartado, disponible } = getStats();
+  const { total, pagado, apartado, disponible, vendido } = getStats();
   document.getElementById('stat-total').textContent      = total;
   document.getElementById('stat-pagado').textContent     = pagado;
   document.getElementById('stat-apartado').textContent   = apartado;
   document.getElementById('stat-disponible').textContent = disponible;
+  document.getElementById('stat-vendido').textContent    = vendido;
 }
 
 // ── Filtro de vendedores ──────────────────────────────────────────

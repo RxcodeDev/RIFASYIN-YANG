@@ -136,6 +136,7 @@ body::before {
 
 .stat-pagado   .panel-stat-n { background: none; -webkit-text-fill-color: var(--pagado-text); }
 .stat-apartado .panel-stat-n { background: none; -webkit-text-fill-color: var(--oro); }
+.stat-vendido  .panel-stat-n { background: none; -webkit-text-fill-color: var(--naranja); }
 
 /* ── Num Picker — custom select para números disponibles ── */
 .num-picker { position: relative; }
