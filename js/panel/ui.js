@@ -194,8 +194,8 @@ const MAPA_CAMPOS = {
   'f-vendedor':        'Vendedor',
   'f-promotor':        'Promotor',
   'f-metodo':          'Método de Pago',
-  'f-restante':        'Restante',
-  'f-fecha-limite':    'Fecha Limite Apartado',
+  'f-restante':        'Restante ',
+  'f-fecha-limite':    'Fecha Límite Apartado',
   'f-estado-apartado': 'Estado Apartado',
   'f-id-cliente':      'ID Cliente',
 };
