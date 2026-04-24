@@ -1,0 +1,63 @@
+# ── Producción con Traefik: rifasyingyang.rxcode.com.mx ──────────────────────
+#
+# PRE-REQUISITO: Traefik corriendo en /opt/rxcloud/traefik/
+#   Red:           traefik-public (external)
+#   Certresolver:  letsencrypt
+#   SSL:           automático vía Traefik (NO usar Dockerfile.prod ni certbot)
+#
+# PRIMER DEPLOY y DEPLOYS POSTERIORES (mismo comando siempre):
+#   docker compose -f docker-compose.traefik.yml up -d --build
+#
+# BAJAR:
+#   docker compose -f docker-compose.traefik.yml down
+#
+# LOGS:
+#   docker compose -f docker-compose.traefik.yml logs -f web
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Servidor web: nginx sirve estáticos + proxy a upload ─────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile          # nginx simple HTTP — SSL lo maneja Traefik
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
+    depends_on:
+      - upload
+    restart: unless-stopped
+    networks:
+      - traefik-public                # expuesto a Traefik
+      - internal                      # comunicación con upload
+    labels:
+      - "traefik.enable=true"
+
+      # ── Router HTTPS ────────────────────────────────────────────────────────
+      - "traefik.http.routers.rifas.rule=Host(`rifasyingyang.rxcode.com.mx`)"
+      - "traefik.http.routers.rifas.entrypoints=websecure"
+      - "traefik.http.routers.rifas.tls.certresolver=letsencrypt"
+      - "traefik.http.services.rifas.loadbalancer.server.port=80"
+
+  # ── Servidor de subida de archivos ────────────────────────────────────────
+  upload:
+    build:
+      context: ./upload-server
+      dockerfile: Dockerfile
+    volumes:
+      - uploads_data:/data/uploads
+    restart: unless-stopped
+    networks:
+      - internal                      # solo red interna, nunca expuesto
+
+# ── Volumen persistente de uploads ───────────────────────────────────────────
+volumes:
+  uploads_data:
+
+# ── Redes ─────────────────────────────────────────────────────────────────────
+networks:
+  traefik-public:
+    external: true                    # red del Traefik global
+  internal:
+    internal: true                    # red privada web ↔ upload
