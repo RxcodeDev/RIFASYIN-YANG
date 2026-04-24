@@ -423,6 +423,7 @@ nav {
   flex-direction: column;
   gap: .6rem;
 }
+.status-upload-zone[hidden] { display: none; }
 
 .upload-label {
   font-family: 'Barlow Condensed', sans-serif;
