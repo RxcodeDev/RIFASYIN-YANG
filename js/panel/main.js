@@ -41,7 +41,10 @@ async function guardar() {
       await sheets.updateRecord(datos['No. Boleto'], datos, original);
       toast('Boleto actualizado ✓');
     } else {
-      await sheets.add(datos);
+      // El sheet tiene las 1100 filas precargadas como "Disponible".
+      // "Agregar" = actualizar esa fila existente, nunca appendRow.
+      const original = getBoletos().find(b => b['No. Boleto'] == datos['No. Boleto']);
+      await sheets.updateRecord(datos['No. Boleto'], datos, original ?? {});
       toast('Boleto agregado ✓');
     }
     cerrarModal();
