@@ -6,13 +6,17 @@ import { updateStats, setMode, genRand, checkT,
          renderGrid, filterBy, filterG }                   from './features/tickets.js';
 import { SOLD, setSold }                                    from './config.js';
 import { unlockAudio }                                     from './utils/sounds.js';
-import { sheets }                                          from './panel/api.js';
+import { sheets, initEnv }                                 from './panel/api.js';
 import { initBuyModal }                                    from './features/buy-modal.js';
 
 // Cache de todas las filas del sheet — se usa en el modal de verificación
 let _allRows = [];
 
 async function bootstrap() {
+  // ── Leer entorno activo desde el servidor (pruebas | prod) ────
+  // Debe ser lo primero: garantiza que sheets use el URL correcto.
+  await initEnv();
+
   // ── Cargar contenido desde JSON ────────────────────────────────
   const data = await fetch('data/site.json').then(r => r.json());
 

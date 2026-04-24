@@ -2,7 +2,7 @@
  * js/panel/main.js
  * Bootstrap: carga datos, enlaza eventos. Sin lógica de negocio aquí.
  */
-import { sheets, getEnv, setEnv }  from './api.js';
+import { sheets, getEnv, setEnv, initEnv }  from './api.js';
 import { setBoletos, getBoletos, setFiltro } from './store.js';
 import {
   renderStats, renderFiltroVendedor, renderTabla, showLoader,
@@ -126,6 +126,9 @@ function bindEventos() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
-initComprobantes();
-bindEventos();
-cargar();
+// initEnv() debe ser lo primero: determina qué sheet lee sheets.getAll()
+initEnv().then(() => {
+  initComprobantes();
+  bindEventos();
+  cargar();
+});

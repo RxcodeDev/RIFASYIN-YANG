@@ -3,12 +3,10 @@
  * Gestión de entornos (pruebas / prod) y cliente Google Sheets.
  * Único lugar donde viven las URLs — cambiarlas aquí afecta todo el panel.
  *
- * Estrategia de entorno:
- *  - En el dominio de producción → siempre 'prod', sin excepción.
- *    Ningún localStorage ni parámetro puede cambiarlo: garantiza que
- *    TODOS los usuarios (panel y página pública) lean el mismo sheet real.
- *  - En localhost / cualquier otro host → localStorage con fallback 'pruebas',
- *    permitiendo al dev cambiar de entorno desde el panel.
+ * El entorno activo se almacena en el servidor (/api/env) para que sea
+ * compartido entre TODOS los usuarios y navegadores.
+ * El panel lo cambia vía POST /api/env; la página pública lo lee al arrancar.
+ * Así, un cambio en el panel se refleja en tiempo real en toda la app.
  */
 import { GoogleSheetsClient } from '../lib/google-sheets/index.js';
 
@@ -17,32 +15,44 @@ export const ENVS = {
   prod:    'https://script.google.com/macros/s/AKfycbw66pDi2rFEZ2J0anPGfbZTWYb8kqv8KD7P_Vk2CI4tIxBhjq16NaxbWaV6dGkYqx_CUg/exec',
 };
 
-const PROD_HOST = 'rifasyingyang.rxcode.com.mx';
-const ENV_KEY   = 'panel_env';
-
-// En producción el entorno es fijo; en dev lo controla localStorage.
-const IS_PROD_HOST = window.location.hostname === PROD_HOST;
-
-let _envName = IS_PROD_HOST
-  ? 'prod'
-  : (localStorage.getItem(ENV_KEY) ?? 'pruebas');
-
-let _client = new GoogleSheetsClient({ apiUrl: ENVS[_envName] });
+let _envName = 'prod'; // valor inicial seguro mientras llega la respuesta del servidor
+let _client  = new GoogleSheetsClient({ apiUrl: ENVS[_envName] });
 
 /** Retorna el nombre del entorno activo ('pruebas' | 'prod'). */
 export function getEnv() { return _envName; }
 
 /**
- * Cambia el entorno activo y persiste la elección.
- * En el dominio de producción esta función es no-op: el entorno no se puede
- * cambiar para evitar que cualquier usuario altere los datos que ve toda la app.
+ * Cambia el entorno activo en el servidor y actualiza el cliente local.
+ * Todos los usuarios que recarguen verán el nuevo entorno.
  */
-export function setEnv(name) {
-  if (IS_PROD_HOST) return; // Bloqueado en producción — entorno siempre 'prod'
+export async function setEnv(name) {
   if (!ENVS[name]) throw new Error(`Entorno desconocido: ${name}`);
+  const res = await fetch('/api/env', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ env: name }),
+  });
+  if (!res.ok) throw new Error(`Error al cambiar entorno: HTTP ${res.status}`);
   _envName = name;
-  localStorage.setItem(ENV_KEY, name);
   _client  = new GoogleSheetsClient({ apiUrl: ENVS[name] });
+}
+
+/**
+ * Inicializa el entorno leyéndolo desde el servidor.
+ * Debe llamarse una vez al arrancar (bootstrap de main.js y panel/main.js).
+ */
+export async function initEnv() {
+  try {
+    const res  = await fetch('/api/env');
+    const data = await res.json();
+    if (data.ok && ENVS[data.env]) {
+      _envName = data.env;
+      _client  = new GoogleSheetsClient({ apiUrl: ENVS[data.env] });
+    }
+  } catch {
+    // Si el servidor no responde (dev sin Docker) queda en 'prod' como fallback seguro
+    console.warn('[api] No se pudo leer /api/env — usando entorno por defecto: prod');
+  }
 }
 
 /** Proxy transparente — todos los módulos siguen usando sheets.xxx() sin cambios. */

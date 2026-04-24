@@ -15,6 +15,11 @@ const PORT        = 3000;
 const UPLOAD_DIR  = process.env.UPLOAD_DIR ?? '/data/uploads';
 const MAX_BYTES   = 5 * 1024 * 1024; // 5 MB (igual que el check del frontend)
 
+// Archivo donde se persiste el entorno activo ('pruebas' | 'prod')
+// Vive en UPLOAD_DIR para aprovechar el volumen Docker ya existente.
+const ENV_FILE    = path.join(UPLOAD_DIR, '.active-env');
+const VALID_ENVS  = new Set(['pruebas', 'prod']);
+
 // Tipos MIME permitidos y su extensión
 const ALLOWED = {
   'image/jpeg':      '.jpg',
@@ -26,6 +31,16 @@ const ALLOWED = {
 
 // Crea el directorio de uploads si no existe
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+// ── Helpers de entorno ─────────────────────────────────────────────────────
+
+function readEnv() {
+  try { return fs.readFileSync(ENV_FILE, 'utf8').trim(); } catch { return 'prod'; }
+}
+
+function writeEnv(name) {
+  fs.writeFileSync(ENV_FILE, name, 'utf8');
+}
 
 // ── Utilidades ─────────────────────────────────────────────────────────────
 
@@ -41,6 +56,37 @@ function json(res, status, body) {
 // ── Servidor ───────────────────────────────────────────────────────────────
 
 const server = http.createServer((req, res) => {
+  // ── CORS headers mínimos — solo para las rutas /api/env ───────
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+
+  // ── GET /api/env — devuelve el entorno activo ──────────────────
+  if (req.method === 'GET' && req.url === '/api/env') {
+    return json(res, 200, { ok: true, env: readEnv() });
+  }
+
+  // ── POST /api/env — cambia el entorno activo ──────────────────
+  if (req.method === 'POST' && req.url === '/api/env') {
+    const chunks = [];
+    req.on('data', c => chunks.push(c));
+    req.on('end', () => {
+      let body;
+      try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); }
+      catch { return json(res, 400, { ok: false, error: 'Invalid JSON' }); }
+
+      const { env } = body;
+      if (!env || !VALID_ENVS.has(env)) {
+        return json(res, 400, { ok: false, error: `Entorno inválido. Usa: ${[...VALID_ENVS].join(' | ')}` });
+      }
+      writeEnv(env);
+      console.info(`[env] Entorno cambiado a: ${env}`);
+      return json(res, 200, { ok: true, env });
+    });
+    return;
+  }
+
   // ── GET /api/uploads — lista archivos subidos ──────────────────
   if (req.method === 'GET' && req.url === '/api/uploads') {
     fs.readdir(UPLOAD_DIR, (err, files) => {
