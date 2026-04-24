@@ -283,8 +283,13 @@ function initStatusModal() {
       detailUpload.hidden       = true;
       detailNotice24h.hidden    = true;
       detailBuyAction.hidden    = false;
-      // Al pulsar el botón: cierra el modal y navega a #comprar
-      detailBuyBtn.onclick = () => { close(); window.location.hash = '#comprar'; };
+      // Cierra status modal, abre buy modal y pre-rellena el número
+      detailBuyBtn.onclick = () => {
+        const num = _currentNum;
+        close();
+        document.getElementById('buy-btn').click();
+        document.getElementById('buyTicket').value = num;
+      };
     } else {
       detailAbonos.innerHTML = buildTimeline(row, estado);
       detailBuyAction.hidden = true;
