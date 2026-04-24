@@ -358,3 +358,70 @@
   .tickets-badge { display: none; }
 }
 
+/* ─────────────────────────────────────────────────────────────────
+   Desktop: layout dos columnas — contenido | coche
+   Aplica a todo lo que NO sea móvil (≥ 769 px).
+   La media query mobile (max-width: 768px) tiene mayor especificidad
+   en cascade layers y siempre sobreescribe estos estilos.
+   ───────────────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  /* ── Hero: grid 2 columnas, altura exacta a la pantalla ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 1fr;
+    align-items: center;
+    height: 100dvh;       /* strict: nada se desborda verticalmente */
+    overflow: hidden;
+    padding-top: 80px;
+    padding-bottom: 0;
+    min-height: unset;
+  }
+
+  /* ── Contenido: columna izquierda, centrado vertical ── */
+  .hero-content {
+    flex: unset;
+    max-width: 560px;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    position: relative;
+    z-index: 2;
+    padding-bottom: 0;
+  }
+
+  /* ── Coche: columna derecha, pegado al fondo de la celda ── */
+  .hero-car-wrap {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+    align-self: end;       /* alineado al borde inferior del grid */
+    margin-left: -8%;      /* solape hacia la izquierda */
+    z-index: 1;
+  }
+  /* Imagen: crece hasta llenar la columna pero no supera la altura disponible */
+  .hero-car-wrap img {
+    width: 115%;
+    max-height: 82dvh;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ── Glow bajo el coche ── */
+  .hero-car-glow {
+    left: auto;
+    right: 0;
+    width: 56%;
+    bottom: -5%;
+  }
+
+  /* ── Título más grande en pantallas anchas ── */
+  .hero-title {
+    font-size: clamp(3.8rem, 5.5vw, 7.5rem);
+  }
+}
+

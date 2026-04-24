@@ -276,6 +276,7 @@ function initStatusModal() {
       detailAbonos.innerHTML = buildTimeline(row, estado);
     }
     detailUpload.hidden = true;
+  }
 
   function buildTimeline(row, estado) {
     // NOTE: AB1 tiene espacio al final en el sheet — se prueba ambas variantes
