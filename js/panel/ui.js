@@ -453,6 +453,7 @@ export function toast(msg, error = false) {
 let _dashStats      = null;
 let _dashVendors    = null;
 let _dashResizeTimer = null;
+let _toastTimer     = null;
 
 // Resize handler: redraws charts when viewport changes
 window.addEventListener('resize', () => {
