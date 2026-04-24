@@ -6,8 +6,26 @@
 let _boletos  = [];  // todos los registros del sheet
 let _filtro   = { busqueda: '', estado: '', vendedor: '' };
 
+// ── Normalización de nombres ──────────────────────────────────────
+// Capitaliza la primera letra de cada palabra, elimina espacios extra.
+// Aplica a Vendedor y Promotor para unificar "luis", "LUIS", "Luis" → "Luis".
+function normalizeName(str) {
+  if (!str) return str;
+  return str
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 // ── Boletos ───────────────────────────────────────────────────────
-export function setBoletos(rows) { _boletos = rows; }
+export function setBoletos(rows) {
+  _boletos = rows.map(r => ({
+    ...r,
+    Vendedor: normalizeName(r['Vendedor']),
+    Promotor: normalizeName(r['Promotor']),
+  }));
+}
 export function getBoletos()     { return _boletos; }
 
 // ── Filtros ───────────────────────────────────────────────────────
