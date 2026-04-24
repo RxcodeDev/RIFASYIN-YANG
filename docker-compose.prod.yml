@@ -1,0 +1,65 @@
+# ── Producción: rifasyingyang.rxcode.com.mx ───────────────────────────────────
+#
+# PRIMER DEPLOY (solo la primera vez en el VPS):
+#
+#   1. Levanta web + upload (cert temporal auto-generado, nginx arranca en HTTP+HTTPS):
+#        docker compose -f docker-compose.prod.yml up -d web upload
+#
+#   2. Obtén el certificado real de Let's Encrypt:
+#        docker compose -f docker-compose.prod.yml run --rm certbot \
+#          certonly --webroot -w /var/www/certbot \
+#          --email admin@rxcode.com.mx --agree-tos --no-eff-email \
+#          -d rifasyingyang.rxcode.com.mx
+#
+#   3. Recarga nginx para que use el cert real:
+#        docker compose -f docker-compose.prod.yml exec web nginx -s reload
+#
+#   4. Levanta el servicio certbot para renovación automática:
+#        docker compose -f docker-compose.prod.yml up -d
+#
+# DEPLOYS POSTERIORES:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Servidor web: nginx + SSL ─────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
+      - letsencrypt:/etc/letsencrypt
+      - acme_challenge:/var/www/certbot
+    depends_on:
+      - upload
+    restart: unless-stopped
+
+  # ── Servicio de subida de archivos ────────────────────────────────────────
+  upload:
+    build:
+      context: ./upload-server
+      dockerfile: Dockerfile
+    volumes:
+      - uploads_data:/data/uploads
+    restart: unless-stopped
+
+  # ── Renovación automática del certificado SSL (cada 12 h) ─────────────────
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - acme_challenge:/var/www/certbot
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done"
+    restart: unless-stopped
+
+# ── Volúmenes persistentes ────────────────────────────────────────────────────
+volumes:
+  uploads_data:
+  letsencrypt:
+  acme_challenge:
