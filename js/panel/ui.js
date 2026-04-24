@@ -365,12 +365,14 @@ export function validateForm(esEdicion) {
   const vendedor  = get('f-vendedor');
   const idCliente = get('f-id-cliente');
 
-  // No. Boleto: rango 1–1100, sin duplicados al crear
+  // No. Boleto: rango 1–1100, ocupado solo si ya está Apartado o Pagado
   if (!numStr || isNaN(num) || num < 1 || num > 1100) {
     errors.push({ id: 'f-num', msg: 'Número inválido (1–1100)' });
   } else if (!esEdicion) {
-    const exists = getBoletos().find(b => b['No. Boleto'] == num);
-    if (exists) errors.push({ id: 'f-num', msg: `El boleto #${num} ya existe` });
+    const exists = getBoletos().find(
+      b => b['No. Boleto'] == num && b['Estado Boleto'] !== 'Disponible'
+    );
+    if (exists) errors.push({ id: 'f-num', msg: `El boleto #${num} ya está ${exists['Estado Boleto']}` });
   }
 
   // Teléfono: exactamente 10 dígitos
