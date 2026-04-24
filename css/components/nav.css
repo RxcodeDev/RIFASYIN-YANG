@@ -496,3 +496,18 @@ nav {
   line-height: 1.5;
   text-transform: uppercase;
 }
+
+/* ── Botón comprar en modal de consulta ──────────────────────────── */
+.status-buy-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  margin-top: 1.4rem;
+  padding: 1rem;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  clip-path: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+}

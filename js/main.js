@@ -259,6 +259,10 @@ function initStatusModal() {
   }
 
   // ── Render detail ─────────────────────────────────────────────────
+  const detailBuyAction = document.getElementById('detailBuyAction');
+  const detailBuyBtn    = document.getElementById('detailBuyBtn');
+  const detailNotice24h = document.getElementById('detailNotice24h');
+
   function showDetail(row) {
     formView.hidden   = true;
     detailView.hidden = false;
@@ -275,11 +279,19 @@ function initStatusModal() {
     detailBadge.classList.add(badgeMap[estado] ?? 'badge-libre');
 
     if (estado === 'Disponible') {
-      detailAbonos.innerHTML = '<p class="tl-available-msg">Este boleto está disponible. ¡Apártalo ahora!</p>';
+      detailAbonos.innerHTML    = '<p class="tl-available-msg">Este boleto está disponible. ¡Apártalo ahora!</p>';
+      detailUpload.hidden       = true;
+      detailNotice24h.hidden    = true;
+      detailBuyAction.hidden    = false;
+      // Al pulsar el botón: cierra el modal y navega a #comprar
+      detailBuyBtn.onclick = () => { close(); window.location.hash = '#comprar'; };
     } else {
       detailAbonos.innerHTML = buildTimeline(row, estado);
+      detailBuyAction.hidden = true;
+      detailNotice24h.hidden = false;
+      // Upload solo disponible para Apartado/Pagado (el usuario es el dueño)
+      detailUpload.hidden    = false;
     }
-    detailUpload.hidden = true;
   }
 
   function buildTimeline(row, estado) {
