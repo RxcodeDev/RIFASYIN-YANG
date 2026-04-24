@@ -7,14 +7,17 @@ let _boletos  = [];  // todos los registros del sheet
 let _filtro   = { busqueda: '', estado: '', vendedor: '' };
 
 // ── Normalización de nombres ──────────────────────────────────────
-// Capitaliza la primera letra de cada palabra, elimina espacios extra.
-// Aplica a Vendedor y Promotor para unificar "luis", "LUIS", "Luis" → "Luis".
+// 1. Trim + colapsa espacios múltiples
+// 2. NFD + elimina diacríticos → "Mamá"→"Mama", "Elmago"→"Elmago"
+// 3. Title Case → "luis"→"Luis", "LUIS"→"Luis"
+// Resultado: misma clave de agrupación para variantes tipográficas del mismo nombre.
 function normalizeName(str) {
   if (!str) return str;
   return str
     .trim()
-    .toLowerCase()
     .replace(/\s+/g, ' ')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos/diacríticos
+    .toLowerCase()
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 
