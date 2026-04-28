@@ -103,8 +103,16 @@ async function guardar() {
 
   if (!validateForm(esEdicion)) return; // detener si hay errores
 
+  const spinnerOverlay = document.getElementById('modal-spinner-overlay');
+  const spinnerMsg     = document.getElementById('modal-spinner-msg');
+
   try {
     document.getElementById('btn-guardar').disabled = true;
+    spinnerMsg.textContent = esEdicion
+      ? `Guardando boleto #${datos['No. Boleto']}…`
+      : `Creando boleto #${datos['No. Boleto']}…`;
+    spinnerOverlay.hidden = false;
+
     if (esEdicion) {
       const original = getBoletos().find(b => b['No. Boleto'] == datos['No. Boleto']);
       await sheets.updateRecord(datos['No. Boleto'], datos, original);
@@ -116,9 +124,11 @@ async function guardar() {
       await sheets.updateRecord(datos['No. Boleto'], datos, original ?? {});
       toast('Boleto agregado ✓');
     }
+    spinnerOverlay.hidden = true;
     cerrarModal();
     await cargar();
   } catch (e) {
+    spinnerOverlay.hidden = true;
     toast('Error: ' + e.message, true);
   } finally {
     document.getElementById('btn-guardar').disabled = false;
