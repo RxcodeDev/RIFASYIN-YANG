@@ -501,6 +501,28 @@ tbody td {
   box-shadow: 0 24px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
   position: relative;
 }
+/* Spinner overlay inside modal */
+.modal-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .9rem;
+  background: rgba(10,12,18,.72);
+  backdrop-filter: blur(5px);
+  z-index: 10;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.modal-spinner-overlay[hidden] { display: none; }
+.modal-spinner { width: 30px; height: 30px; border-width: 3px; }
+
 .modal::before {
   content: '';
   position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
@@ -675,6 +697,32 @@ tbody td {
   .table-wrap      { overflow-x: visible; border: none; background: transparent; }
   table            { display: none; }
   .cards-list      { display: flex; }
+
+  /* Modal: centrado con scroll interno */
+  .modal-overlay {
+    align-items: center;
+    padding: 1rem;
+  }
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88dvh;
+    border-radius: 12px;
+    padding: 1.25rem 1rem 1.25rem;
+  }
+
+  /* Botones del footer: Liberar arriba (ancho completo), Cancelar+Guardar abajo */
+  .modal-actions {
+    flex-wrap: wrap;
+    gap: .6rem;
+  }
+  .modal-actions #btn-liberar {
+    order: 1;
+    width: 100%;
+    margin-right: 0;
+  }
+  .modal-actions #btn-cancelar { order: 2; flex: 1; }
+  .modal-actions #btn-guardar  { order: 3; flex: 1; }
 }
 
 /* ── Dashboard ── */

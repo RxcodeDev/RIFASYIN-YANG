@@ -26,6 +26,75 @@ async function cargar() {
   }
 }
 
+// ── Modal de confirmación (liberar boleto) ────────────────────────
+function mostrarConfirm() {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-overlay');
+    overlay.classList.add('active');
+
+    const ok     = document.getElementById('confirm-ok');
+    const cancel = document.getElementById('confirm-cancelar');
+
+    function cleanup(result) {
+      overlay.classList.remove('active');
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      resolve(result);
+    }
+    function onOk()     { cleanup(true);  }
+    function onCancel() { cleanup(false); }
+
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+    overlay.addEventListener('click', e => { if (e.target === overlay) cleanup(false); }, { once: true });
+  });
+}
+
+// ── Liberar boleto (reset a Disponible) ──────────────────────────
+const RESET_BOLETO = {
+  'Nombre del Comprador':  '',
+  'Teléfono':              '',
+  'Estado Boleto':         'Disponible',
+  'Estado Pago':           'No pagado',
+  'Vendedor':              '',
+  'Promotor':              '',
+  'Fecha de Venta':        '',
+  'Método de Pago':        '',
+  'Fecha Límite Apartado': '',
+  'Estado Apartado':       '',
+  'ID Cliente':            '',
+  'Cliente Repetido':      '',
+  'Restante ':             '550',
+  'AB1 ':                  '',
+  'AB2': '', 'AB3': '', 'AB4': '', 'AB5': '', 'AB6':  '',
+  'AB7': '', 'AB8': '', 'AB9': '', 'AB10': '', 'AB11': '', 'AB12': '',
+};
+
+async function liberarBoleto() {
+  const num = document.getElementById('f-num').value;
+  if (!num) return;
+
+  const confirmado = await mostrarConfirm();
+  if (!confirmado) return;
+
+  const overlay = document.getElementById('modal-spinner-overlay');
+  const msg     = document.getElementById('modal-spinner-msg');
+  msg.textContent = `Liberando boleto #${num}…`;
+  overlay.hidden  = false;
+
+  try {
+    const original = getBoletos().find(b => b['No. Boleto'] == num);
+    await sheets.updateRecord(num, { ...RESET_BOLETO, 'No. Boleto': num }, original ?? {});
+    overlay.hidden = true;
+    cerrarModal();
+    toast(`Boleto #${num} liberado ✓`);
+    await cargar();
+  } catch (e) {
+    overlay.hidden = true;
+    toast('Error al liberar: ' + e.message, true);
+  }
+}
+
 // ── Guardar (nuevo o edición) ─────────────────────────────────────
 async function guardar() {
   const datos    = getDatosForm();
@@ -76,6 +145,7 @@ function bindEventos() {
   document.getElementById('btn-recargar').addEventListener('click', cargar);
   document.getElementById('btn-cancelar').addEventListener('click', cerrarModal);
   document.getElementById('btn-guardar').addEventListener('click', guardar);
+  document.getElementById('btn-liberar').addEventListener('click', liberarBoleto);
 
   // Selector de entorno (prod / pruebas)
   const envSelect = document.getElementById('env-select');
@@ -95,6 +165,14 @@ function bindEventos() {
 
   // Delegación en tbody: un solo listener para todos los botones de editar
   document.getElementById('tbody').addEventListener('click', e => {
+    const btn = e.target.closest('[data-editar]');
+    if (!btn) return;
+    const boleto = getBoletos().find(b => b['No. Boleto'] == btn.dataset.editar);
+    if (boleto) abrirModalEditar(boleto);
+  });
+
+  // Delegación en cards-list: mismo comportamiento para la vista mobile
+  document.getElementById('cards-list').addEventListener('click', e => {
     const btn = e.target.closest('[data-editar]');
     if (!btn) return;
     const boleto = getBoletos().find(b => b['No. Boleto'] == btn.dataset.editar);

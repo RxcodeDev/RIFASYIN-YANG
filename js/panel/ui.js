@@ -218,6 +218,7 @@ export function abrirModalNuevo() {
   if (hint) hint.hidden = true;
 
   document.getElementById('modal-title').innerHTML = 'Nuevo <span>Boleto</span>';
+  document.getElementById('btn-liberar').hidden = true;
   resetPicker(); // limpia el picker y pone f-num.readOnly = false
   _abrirModal();
 }
@@ -234,6 +235,7 @@ export function abrirModalEditar(boleto) {
 
   document.getElementById('modal-title').innerHTML =
     `Editar boleto <span>#${boleto['No. Boleto']}</span>`;
+  document.getElementById('btn-liberar').hidden = false;
   setPickerValue(boleto['No. Boleto']); // deshabilita picker y muestra #num
   _abrirModal();
 }
@@ -250,6 +252,8 @@ function _abrirModal() {
 export function cerrarModal() {
   _clearErrors();
   document.getElementById('modal-overlay').classList.remove('active');
+  const so = document.getElementById('modal-spinner-overlay');
+  if (so) so.hidden = true;
 }
 
 export function getDatosForm() {

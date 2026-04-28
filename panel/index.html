@@ -284,13 +284,32 @@
     </div>
 
     <div class="modal-actions">
+      <button class="btn btn-danger" id="btn-liberar" hidden style="margin-right:auto">Liberar boleto</button>
       <button class="btn btn-ghost" id="btn-cancelar">Cancelar</button>
       <button class="btn btn-primary" id="btn-guardar">Guardar</button>
+    </div>
+
+    <!-- Spinner overlay: cubre el modal mientras procesa -->
+    <div class="modal-spinner-overlay" id="modal-spinner-overlay" hidden>
+      <div class="spinner modal-spinner"></div>
+      <span id="modal-spinner-msg"></span>
     </div>
   </div>
 </div>
 
 
+
+<!-- MODAL CONFIRMACIÓN LIBERAR -->
+<div class="modal-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal" style="max-width:400px">
+    <h2 class="modal-title" id="confirm-title">¿Liberar <span>boleto</span>?</h2>
+    <p style="color:var(--muted);margin:.5rem 0 1.5rem">Se borrarán todos los datos del comprador y quedará como <strong style="color:var(--texto)">Disponible</strong>.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirm-cancelar">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-ok">Sí, liberar</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
