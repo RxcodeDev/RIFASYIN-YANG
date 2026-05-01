@@ -344,12 +344,16 @@ function _recalcRestante() {
   const estadoPago   = document.getElementById('f-estado-pago');
   if (!estadoBoleto || !estadoPago) return;
 
-  if (restante === 0 && _abonos.length > 0) {
-    // Pago completo → Pagado
+  if (_abonos.length === 0) {
+    // Sin abonos → Disponible
+    estadoBoleto.value = 'Disponible';
+    estadoPago.value   = 'No pagado';
+  } else if (restante === 0) {
+    // Suma cubre el precio completo → Pagado
     estadoBoleto.value = 'Pagado';
     estadoPago.value   = 'Pagado';
-  } else if (restante > 0 && estadoBoleto.value === 'Pagado') {
-    // Se eliminó un abono y ya no está liquidado → revertir a Apartado
+  } else {
+    // Hay abonos pero aún queda saldo → Apartado
     estadoBoleto.value = 'Apartado';
     estadoPago.value   = 'No pagado';
   }
