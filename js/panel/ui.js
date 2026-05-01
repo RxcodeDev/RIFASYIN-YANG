@@ -201,6 +201,11 @@ const MAPA_CAMPOS = {
   'f-id-cliente':      'ID Cliente',
 };
 
+// Claves de abonos — AB1 tiene espacio al final en el sheet (dato heredado del origen)
+const AB_KEYS     = ['AB1 ','AB2','AB3','AB4','AB5','AB6','AB7','AB8','AB9','AB10','AB11','AB12'];
+const PRECIO_BASE = 550;
+let _abonos = []; // estado en memoria de los abonos del boleto abierto en el modal
+
 export function abrirModalNuevo() {
   CAMPOS.forEach(id => {
     const el = document.getElementById(id);
@@ -220,7 +225,9 @@ export function abrirModalNuevo() {
   document.getElementById('modal-title').innerHTML = 'Nuevo <span>Boleto</span>';
   document.getElementById('btn-liberar').hidden = true;
   resetPicker(); // limpia el picker y pone f-num.readOnly = false
+  _abonos = [];
   _abrirModal();
+  _renderAbonos();
 }
 
 export function abrirModalEditar(boleto) {
@@ -252,6 +259,12 @@ export function abrirModalEditar(boleto) {
       ? raw.slice(0, 10)
       : raw;
   });
+
+  // Cargar abonos desde el boleto (AB1–AB12, ignorar vacíos y ceros)
+  _abonos = AB_KEYS
+    .map(k => parseFloat(boleto[k]))
+    .filter(v => !isNaN(v) && v > 0);
+  _renderAbonos();
 }
 
 let _pickerInited = false;
@@ -259,6 +272,7 @@ function _abrirModal() {
   if (!_pickerInited) { initNumPicker(); _pickerInited = true; }
   _populateDataLists();
   _bindCascadeOnce();
+  _bindAbonosOnce();
   _clearErrors();
   document.getElementById('modal-overlay').classList.add('active');
 }
@@ -271,9 +285,111 @@ export function cerrarModal() {
 }
 
 export function getDatosForm() {
-  return Object.fromEntries(
+  const base = Object.fromEntries(
     CAMPOS.map(id => [MAPA_CAMPOS[id], document.getElementById(id).value])
   );
+  // Incluir AB1–AB12: rellenar con valores del array _abonos, vaciar las columnas sobrantes
+  AB_KEYS.forEach((key, i) => {
+    base[key] = _abonos[i] !== undefined ? String(_abonos[i]) : '';
+  });
+  return base;
+}
+
+// ── Gestión de abonos ───────────────────────────────────────────
+function _renderAbonos() {
+  const list  = document.getElementById('abonos-list');
+  const count = document.getElementById('abonos-count');
+  if (!list) return;
+
+  list.innerHTML = '';
+
+  if (_abonos.length === 0) {
+    const empty = document.createElement('p');
+    empty.className   = 'abonos-empty';
+    empty.textContent = 'Sin abonos registrados';
+    list.appendChild(empty);
+  } else {
+    _abonos.forEach((monto, i) => {
+      const chip = document.createElement('div');
+      chip.className        = 'abono-chip';
+      chip.setAttribute('role', 'listitem');
+      const idx   = document.createElement('span');
+      idx.className   = 'abono-chip-idx';
+      idx.textContent = `AB${i + 1}`;
+      const val   = document.createElement('span');
+      val.className   = 'abono-chip-monto';
+      val.textContent = `$${monto}`;
+      const del   = document.createElement('button');
+      del.type          = 'button';
+      del.className     = 'abono-chip-del';
+      del.dataset.del   = i;
+      del.setAttribute('aria-label', `Eliminar abono ${i + 1}`);
+      del.textContent   = '×';
+      chip.append(idx, val, del);
+      list.appendChild(chip);
+    });
+  }
+
+  if (count) count.textContent = `${_abonos.length} / 12`;
+  _recalcRestante();
+}
+
+function _recalcRestante() {
+  const sum      = _abonos.reduce((acc, v) => acc + v, 0);
+  const restante = Math.max(0, PRECIO_BASE - sum);
+  const input    = document.getElementById('f-restante');
+  if (input) input.value = restante;
+
+  const estadoBoleto = document.getElementById('f-estado-boleto');
+  const estadoPago   = document.getElementById('f-estado-pago');
+  if (!estadoBoleto || !estadoPago) return;
+
+  if (restante === 0 && _abonos.length > 0) {
+    // Pago completo → Pagado
+    estadoBoleto.value = 'Pagado';
+    estadoPago.value   = 'Pagado';
+  } else if (restante > 0 && estadoBoleto.value === 'Pagado') {
+    // Se eliminó un abono y ya no está liquidado → revertir a Apartado
+    estadoBoleto.value = 'Apartado';
+    estadoPago.value   = 'No pagado';
+  }
+}
+
+let _abonosBound = false;
+function _bindAbonosOnce() {
+  if (_abonosBound) return;
+  _abonosBound = true;
+
+  // Delegación: delete por índice
+  document.getElementById('abonos-list').addEventListener('click', e => {
+    const btn = e.target.closest('[data-del]');
+    if (!btn) return;
+    _abonos.splice(parseInt(btn.dataset.del, 10), 1);
+    _renderAbonos();
+  });
+
+  // Agregar abono
+  const addInput = document.getElementById('abono-input');
+  const addBtn   = document.getElementById('abono-add-btn');
+
+  const _doAdd = () => {
+    const raw   = addInput.value.trim();
+    const monto = parseFloat(raw);
+    if (!raw || isNaN(monto) || monto <= 0) {
+      addInput.classList.add('invalid');
+      addInput.focus();
+      return;
+    }
+    if (_abonos.length >= 12) return; // máx 12 abonos
+    addInput.classList.remove('invalid');
+    _abonos.push(monto);
+    addInput.value = '';
+    _renderAbonos();
+    addInput.focus();
+  };
+
+  addBtn.addEventListener('click', _doAdd);
+  addInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); _doAdd(); } });
 }
 
 // ── Selects de catálogo: se rellenan con datos en vivo del store ───

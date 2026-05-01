@@ -725,6 +725,65 @@ tbody td {
   .modal-actions #btn-guardar  { order: 3; flex: 1; }
 }
 
+/* ── Abonos section ─────────────────────────────────────────────── */
+.abonos-section {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: .75rem;
+}
+.abonos-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .65rem;
+}
+.abonos-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted);
+}
+.abonos-list {
+  display: flex; flex-wrap: wrap; gap: .45rem;
+  min-height: 2rem;
+  margin-bottom: .75rem;
+  align-items: center;
+}
+.abonos-empty {
+  font-size: .8rem; color: var(--muted); letter-spacing: .5px;
+  font-style: italic;
+}
+.abono-chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(200,137,10,.1);
+  border: 1px solid rgba(200,137,10,.3);
+  border-radius: 4px;
+  padding: .28rem .55rem;
+}
+.abono-chip-idx {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .62rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted);
+}
+.abono-chip-monto {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .95rem; letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--oro), var(--dorado-claro));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.abono-chip-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted);
+  font-size: 1.1rem; line-height: 1;
+  padding: 0 .1rem;
+  transition: color .15s;
+}
+.abono-chip-del:hover { color: var(--rojo-vivo); }
+.abonos-add {
+  display: flex; gap: .5rem; align-items: center;
+}
+.abonos-add .form-input {
+  max-width: 140px;
+  flex-shrink: 0;
+}
+
 /* ── Dashboard ── */
 .dashboard {
   padding: 1.25rem 4vw 1.5rem;

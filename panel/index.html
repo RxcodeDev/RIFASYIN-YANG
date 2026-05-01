@@ -283,6 +283,22 @@
       </div>
     </div>
 
+    <!-- ── Gestión de Abonos ──────────────────────────────────── -->
+    <div class="abonos-section" id="abonos-section">
+      <div class="abonos-header">
+        <span class="form-label">Abonos</span>
+        <span class="abonos-count" id="abonos-count">0 / 12</span>
+      </div>
+      <div class="abonos-list" id="abonos-list" role="list"></div>
+      <div class="abonos-add">
+        <input class="form-input" type="number" id="abono-input"
+               min="1" max="550" step="1"
+               placeholder="Monto ($)" inputmode="numeric" autocomplete="off"
+               aria-label="Monto del abono" />
+        <button type="button" class="btn btn-ghost btn-sm" id="abono-add-btn">+ Agregar</button>
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-danger" id="btn-liberar" hidden style="margin-right:auto">Liberar boleto</button>
       <button class="btn btn-ghost" id="btn-cancelar">Cancelar</button>

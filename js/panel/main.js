@@ -115,12 +115,21 @@ async function guardar() {
 
     if (esEdicion) {
       const original = getBoletos().find(b => b['No. Boleto'] == datos['No. Boleto']);
+      // Fecha de Venta: escribir explícitamente si el boleto pasa a no-Disponible
+      // y aún no tiene fecha. La fórmula del sheet (=SI(B<n><>"";HOY();"")) es
+      // poco confiable cuando se escribe vía API — se setea aquí como YYYY-MM-DD.
+      if (datos['Estado Boleto'] !== 'Disponible' && !original?.['Fecha de Venta']) {
+        datos['Fecha de Venta'] = new Date().toISOString().split('T')[0];
+      }
       await sheets.updateRecord(datos['No. Boleto'], datos, original);
       toast('Boleto actualizado ✓');
     } else {
       // El sheet tiene las 1100 filas precargadas como "Disponible".
       // "Agregar" = actualizar esa fila existente, nunca appendRow.
       const original = getBoletos().find(b => b['No. Boleto'] == datos['No. Boleto']);
+      if (datos['Estado Boleto'] !== 'Disponible') {
+        datos['Fecha de Venta'] = datos['Fecha de Venta'] || new Date().toISOString().split('T')[0];
+      }
       await sheets.updateRecord(datos['No. Boleto'], datos, original ?? {});
       toast('Boleto agregado ✓');
     }
