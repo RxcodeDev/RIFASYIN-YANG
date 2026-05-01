@@ -310,8 +310,7 @@ function initStatusModal() {
       detailAbonos.innerHTML = buildTimeline(row, estado);
       detailBuyAction.hidden = true;
       detailNotice24h.hidden = false;
-      // Upload solo disponible para Apartado/Pagado (el usuario es el dueño)
-      detailUpload.hidden    = false;
+      detailUpload.hidden    = true;
     }
   }
 
