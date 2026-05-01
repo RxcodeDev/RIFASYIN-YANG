@@ -11,6 +11,7 @@ import { initBuyModal }                                    from './features/buy-
 
 // Cache de todas las filas del sheet — se usa en el modal de verificación
 let _allRows = [];
+let _rowsPromise = null; // se resuelve cuando la primera carga de sheets termina
 
 async function bootstrap() {
   // ── Leer entorno activo desde el servidor (pruebas | prod) ────
@@ -42,7 +43,7 @@ async function bootstrap() {
   renderGrid();
 
   // ── Sincronizar SOLD desde Google Sheets (no-bloqueante) ────────
-  sheets.getAll().then(rows => {
+  _rowsPromise = sheets.getAll().then(rows => {
     _allRows = rows;
     const liveSold = new Set(
       rows
@@ -213,7 +214,7 @@ function initStatusModal() {
   }
 
   // ── Query ────────────────────────────────────────────────────────
-  function check() {
+  async function check() {
     clearErr();
     const n = parseInt(inputNum.value, 10);
 
@@ -222,8 +223,23 @@ function initStatusModal() {
       return;
     }
 
+    // Si los datos aún no cargaron, esperar la promesa con feedback visual
+    if (!_allRows.length && _rowsPromise) {
+      btnSubmit.disabled    = true;
+      btnSubmit.textContent = 'Cargando…';
+      try {
+        await _rowsPromise;
+      } catch {
+        showErr('No se pudieron cargar los datos. Intenta de nuevo.');
+        return;
+      } finally {
+        btnSubmit.disabled    = false;
+        btnSubmit.textContent = 'Consultar Boleto';
+      }
+    }
+
     if (!_allRows.length) {
-      showErr('Los datos están cargando. Espera un momento e intenta de nuevo.');
+      showErr('Los datos no están disponibles. Intenta de nuevo más tarde.');
       return;
     }
 
