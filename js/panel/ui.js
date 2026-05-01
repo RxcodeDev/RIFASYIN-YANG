@@ -224,12 +224,6 @@ export function abrirModalNuevo() {
 }
 
 export function abrirModalEditar(boleto) {
-  CAMPOS.forEach(id => {
-    const col = MAPA_CAMPOS[id];
-    const el  = document.getElementById(id);
-    if (!el) return;
-    el.value = boleto[col] ?? '';
-  });
   const hint = document.getElementById('tel-hint');
   if (hint) hint.hidden = true;
 
@@ -237,7 +231,27 @@ export function abrirModalEditar(boleto) {
     `Editar boleto <span>#${boleto['No. Boleto']}</span>`;
   document.getElementById('btn-liberar').hidden = false;
   setPickerValue(boleto['No. Boleto']); // deshabilita picker y muestra #num
+
+  // NOTE: _abrirModal() debe ir ANTES de asignar los valores de los <select>
+  // porque _populateDataLists() puebla las opciones de Vendedor/Promotor en ese
+  // momento. Si se asigna el.value='Web' a un <select> vacío el browser descarta
+  // el valor; al poblarlo después con _populateDataLists() el select queda en
+  // "— Seleccionar —". El orden correcto: opciones primero, valores después.
   _abrirModal();
+
+  CAMPOS.forEach(id => {
+    const col = MAPA_CAMPOS[id];
+    const el  = document.getElementById(id);
+    if (!el) return;
+    // Fecha Límite Apartado llega como ISO 8601 desde Sheets; <input type="date">
+    // necesita YYYY-MM-DD. slice(0,10) es suficiente porque la hora es siempre
+    // mediodía local (T07:00:00.000Z = 02:00 UTC-5/06:00 UTC-1), no hay riesgo
+    // de cruce de día al truncar.
+    const raw = boleto[col] ?? '';
+    el.value = (id === 'f-fecha-limite' && raw)
+      ? raw.slice(0, 10)
+      : raw;
+  });
 }
 
 let _pickerInited = false;
